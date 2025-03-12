@@ -1,3 +1,6 @@
+################################################################################################################################
+  Project Log - Day [2] - Encryption Tool Progress
+Project Overview: This project began with revisiting basic encryption algorithms and revising concepts I learned during CompTIA Security+ and university. The primary goal is to build a customizable Caesar cipher, allowing users to control the encryption process and make the output unique.
 
 Todo today,
 Add more digits to our cipher and then our digit list, we should use minimum 6 for the shift, and about 32 for the digit list, they can be RNG if the user wants (add this functionality.)
