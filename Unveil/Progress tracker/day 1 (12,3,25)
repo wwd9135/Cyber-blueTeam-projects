@@ -1,0 +1,13 @@
+################################################################################################################################
+  This project began by practicing basic encryption algorithims, and revising my knowledge of encryption I learnt during compTia sec+/ university.
+
+
+
+    Todo today-
+    Develop an encryption algorithm from scratch, can be basic like a caeser for example. 
+      Then improve it as much as you can without using libraries (libs like random can be incorporated of course)
+      If it isn't strong enough we can research techniques to develop them and/or use a library if absolutely necessary.
+      Make sure to create documentation/cheat sheets for my oneDrive learning log.
+
+
+      Depending how we get on begin the decryption tool but dont rush part A get that perfect ideally. 
