@@ -1,0 +1,83 @@
+import random
+
+class Caesar:
+    def __init__(self, shift=None, digits=None):
+        self.shift = shift  # Default to None if not provided
+        self.digits = digits  # Default to None if not provided
+        self.database = []  # Initialize the database as an empty list
+
+    def take_digits(self):
+        try:
+            number = input("Enter a 6 digit number: ")
+
+            # Check if the input is a number and its length is 6
+            if number.isdigit() and len(number) == 6:
+                # Convert the string number to a list of digits (as integers)
+                self.digits = list(map(int, number))  # Each character as an integer
+                print(f"You entered: {self.digits}")
+            else:
+                print("Incorrect entry, please enter a 6 digit number.")
+        except ValueError as e:
+            print("An error occurred:", e)
+
+    
+
+    def take_shift(self):
+        try:
+            shift = input("\nEnter a single digit you'd like to shift the string with: ")
+
+            # Check if the input is a number and is a single digit
+            if shift.isdigit() and len(shift) == 1:
+                self.shift = int(shift)  # Convert the shift to an integer
+                print(f"You entered: {shift}")
+            else:
+                print("Incorrect entry: please enter a single digit for the shift.")
+        except ValueError as e:
+            print("An error occurred:", e)
+    
+    def algorithm(self):
+        # The algorithm method will modify the shift value by a random number multiplier
+        if self.shift is not None:
+            random_factor = random.randint(1, 10000)
+            self.shift *= random_factor  # Increase the shift by a random factor
+            print(f"Increased shift: {self.shift} (multiplied by {random_factor})")
+        return self.shift
+
+    def combination(self):
+        if self.digits is not None and self.shift is not None:
+            # Add the number and shift combination to the database
+            self.database.append((self.digits, self.shift))
+            print(f"Combination added to database: {self.digits} with shift {self.shift}")
+            print(self.database)
+        else:
+            print("Please enter both a valid number and shift before combining.")
+
+    def caeser(self):
+        # Apply the Caesar cipher shift to each digit in the list
+        if not self.digits or self.shift is None:
+            print("No digits or shift provided!")
+            return
+
+        shifted_digits = [(digit * self.shift) % 10000 for digit in self.digits]  # Apply shift and wrap around using modulus
+
+        # Print the original digits
+        print(f"Original digits: {self.digits}")
+
+        # Convert the list of shifted digits to a string without commas (using ' '.join or ''.join depending on your needs)
+        shifted_digits_str = ''.join(str(digit) for digit in shifted_digits)  # Join digits without any separator
+        print(f"Final Shifted digits: {shifted_digits_str}")
+
+        return shifted_digits
+
+
+
+# Example usage:
+caesar = Caesar()
+print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter"
+      " to these 6 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! "
+      "\n \n ############################################################################################################################")
+caesar.take_digits()  # Prompt for a 6-digit number
+caesar.take_shift()   # Prompt for the shift digit
+caesar.algorithm()    # Apply the algorithm to modify the shift
+caesar.combination()  # Add the combination to the database
+shifted_digits = caesar.caeser()  # Apply the Caesar cipher shift
