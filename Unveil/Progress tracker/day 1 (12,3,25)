@@ -1,5 +1,11 @@
 ################################################################################################################################
   This project began by practicing basic encryption algorithims, and revising my knowledge of encryption I learnt during compTia sec+/ university.
+I decided to first make a basic caespher cipher, the aim is to build this, as I want the user to be able to control the output in a way making it more unique.
+
+
+Ultimately the cipher will only be retrievable with a strong cracker (the veil part of this project)
+Or with the original encryption digit used, check todo list for tomorrow for more on this.
+
 
 
 
@@ -11,3 +17,10 @@
 
 
       Depending how we get on begin the decryption tool but dont rush part A get that perfect ideally. 
+
+
+Todo tomorrow,
+Add more digits to our cipher and then our digit list, we should use minimum 6 for the shift, and about 32 for the digit list, they can be RNG if the user wants (add this functionality.)
+we need to make the caeser retracable, as when im using random to alter the shift this becomes a hash when i want it to be an encryption service.
+Then get creative with your algoritihm, research popular models, make it a complete bitch to crack, we shouldnt need any libraries for this its algorithmic.
+
