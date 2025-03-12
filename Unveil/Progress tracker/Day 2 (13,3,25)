@@ -1,1 +1,5 @@
 
+Todo today,
+Add more digits to our cipher and then our digit list, we should use minimum 6 for the shift, and about 32 for the digit list, they can be RNG if the user wants (add this functionality.)
+we need to make the caeser retracable, as when im using random to alter the shift this becomes a hash when i want it to be an encryption service.
+Then get creative with your algoritihm, research popular models, make it a complete bitch to crack, we shouldnt need any libraries for this its algorithmic.
