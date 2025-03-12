@@ -2,7 +2,28 @@
   Project Log - Day [2] - Encryption Tool Progress
 Project Overview: This project began with revisiting basic encryption algorithms and revising concepts I learned during CompTIA Security+ and university. The primary goal is to build a customizable Caesar cipher, allowing users to control the encryption process and make the output unique.
 
-Todo today,
-Add more digits to our cipher and then our digit list, we should use minimum 6 for the shift, and about 32 for the digit list, they can be RNG if the user wants (add this functionality.)
-we need to make the caeser retracable, as when im using random to alter the shift this becomes a hash when i want it to be an encryption service.
-Then get creative with your algoritihm, research popular models, make it a complete bitch to crack, we shouldnt need any libraries for this its algorithmic.
+To-Do for Today:
+Learn How to Access Git via CLI / Visual Studio:
+
+Objective: Learn how to upload code directly from the CLI or Visual Studio for convenience. This will help streamline the development process and make version control easier.
+Expand the Cipher:
+
+Objective: Increase the complexity of the cipher.
+Shift: Use a minimum of 6 digits for the shift.
+Digit List: Increase the digit list to about 32 entries.
+Randomization: Implement the option for the user to generate random digits for both the shift and the digit list (optional feature).
+Make Caesar Cipher Retrievable:
+
+Objective: Ensure the Caesar cipher is retrievable, as using random values to alter the shift turns it into a hash. This needs to be a proper encryption tool and should allow decryption when the original cipher is known.
+Enhance Algorithm:
+
+Objective: Get creative with the encryption algorithm.
+Research popular encryption models.
+Make the algorithm as complex and difficult to crack as possible.
+Avoid using libraries to keep the solution algorithmic and self-contained.
+Create a Decryption Tool:
+
+Objective: Once the encryption algorithm is complete and unique, build a user-friendly tool that can decrypt the cipher.
+The tool should be able to decrypt any encrypted data, provided it has the original cipher code and the digits that were used to encrypt it.
+
+Progress log-
