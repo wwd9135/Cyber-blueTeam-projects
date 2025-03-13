@@ -1,3 +1,4 @@
+Project Log - Day [3] - Encryption Tool Progress
 
 Overall for Today:
 Transitioned from a Caesar cipher to a block cipher algorithm that splits data into 4 blocks for encryption.
