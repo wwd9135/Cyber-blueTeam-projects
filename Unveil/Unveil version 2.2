@@ -1,0 +1,55 @@
+# This splits my output into 4 clear blocks.
+# I will improve this so it creates a 128 bit, 32 byte output.
+
+class Algorithm:
+    def __init__(self):
+        self.cipher_Text = ""
+        self.final_cipher = ""
+
+    def taking_input(self):
+        with open("finaloutput.txt", "r") as file:
+            # Skip the first line
+            next(file)
+            # Read the second line
+            self.cipher_Text = file.readline().strip()
+            print(f"This is the pre-algorithm text:\n{self.cipher_Text}")
+
+    def shifty(self):
+        # Ensure the string is divided into 4 sections
+        section_length = len(self.cipher_Text) // 4
+        remainder = len(self.cipher_Text) % 4
+
+        # Create the 4 sections, adding 1 extra character to the first few sections if there's a remainder
+        section1 = self.cipher_Text[:section_length + (1 if remainder > 0 else 0)]
+        section2 = self.cipher_Text[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        section3 = self.cipher_Text[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        section4 = self.cipher_Text[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        # Debugging: print the 4 sections
+        print(f"Section 1: {section1}")
+        print(f"Section 2: {section2}")
+        print(f"Section 3: {section3}")
+        print(f"Section 4: {section4}")
+
+        # Apply shifting to each section
+        shifted_section1 = 
+        print(shifted_section1)
+
+
+        #shifted_section2 =
+        #shifted_section3 =
+        #shifted_section4 =
+
+        #self.final_cipher = shifted_section1 + shifted_section2 + shifted_section3 + shifted_section4
+
+        # Print the final shifted cipher
+        #print(f"Final cipher: {self.final_cipher}")
+
+# Create an instance of the Algorithm class
+algo = Algorithm()
+
+# Call the taking_input method to load the text
+algo.taking_input()
+
+# Call the shifty method to modify the text and print the final cipher
+algo.shifty()
