@@ -45,3 +45,7 @@ XOR with round key (adding the round key to the data).
 Final Round: After completing the rounds, the block is transformed into ciphertext. Some ciphers (like AES) perform one final round of operations, but without certain steps like mixing. 
 
 Decryption: The decryption process reverses all of these steps, using the same key but applying the inverse operations (e.g., inverse S-boxes, inverse permutations). 
+
+todo 2.0- implement key expansion, we need to decide how we'll manouver around creating and storing keys.
+Can begin crafting the the algorithm first, start taking data, splitting it into two.
+Use substitution, permutation and XOR the data(flip bits 0 becomes 1 etc). Refer to sorting algorithm notes to help here.
