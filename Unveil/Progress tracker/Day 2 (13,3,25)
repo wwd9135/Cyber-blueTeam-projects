@@ -1,51 +1,51 @@
-###############################################################################################################################
-  Project Log - Day [2] - Encryption Tool Progress
-Project Overview: This project began with revisiting basic encryption algorithms and revising concepts I learned during CompTIA Security+ and university. The primary goal is to build a customizable Caesar cipher, allowing users to control the encryption process and make the output unique.
+Project Log - Day [2] - Encryption Tool Progress
+Project Overview:
+This project started with revisiting fundamental encryption algorithms and reviewing concepts I learned during CompTIA Security+ and university. The main goal is to create a customizable Caesar cipher, allowing users to control the encryption process and produce unique outputs.
 
 To-Do for Today:
-Objective: Learn how to upload code directly from the CLI or Visual Studio for convenience. This will help streamline the development process and make version control easier.
-Expand the Cipher:
+Objective 1: Upload Code via CLI/Visual Studio
 
-Objective: Increase the complexity of the cipher.
-Shift: Use a minimum of 6 digits for the shift.
-Digit List: Increase the digit list to about 32 entries.
-Randomization: Implement the option for the user to generate random digits for both the shift and the digit list (optional feature).
+Learn how to upload code directly from the command line or Visual Studio to streamline the development process and simplify version control.
+Objective 2: Expand the Cipher
 
-Make Caesar Cipher Retrievable:
-Objective: Ensure the Caesar cipher is retrievable, as using random values to alter the shift turns it into a hash. This needs to be a proper encryption tool and should allow decryption when the original cipher is known.
+Shift: Extend the shift to a minimum of 6 digits.
+Digit List: Expand the digit list to around 32 entries.
+Randomization: Provide users with the option to generate random digits for both the shift and the digit list (optional feature).
+Objective 3: Make Caesar Cipher Retrievable
 
-Enhance Algorithm:
-Objective: Get creative with the encryption algorithm.
-Research popular encryption models.
-Make the algorithm as complex and difficult to crack as possible.
-Avoid using libraries to keep the solution algorithmic and self-contained.
+Ensure the cipher is retrievable. Since using random values in the shift alters the cipher into a hash, it’s essential that the tool can decrypt data when the original cipher is known.
+Objective 4: Enhance the Algorithm
 
-Create a Decryption Tool:
-Objective: Once the encryption algorithm is complete and unique, build a user-friendly tool that can decrypt the cipher.
-The tool should be able to decrypt any encrypted data, provided it has the original cipher code and the digits that were used to encrypt it.
+Explore advanced encryption techniques.
+Research widely used encryption models to inform the development of a more robust algorithm.
+Make the encryption method as complex and difficult to crack as possible.
+Keep the solution self-contained and avoid relying on external libraries.
+Steps in a Block Cipher Algorithm:
+Key Expansion: Derive several round keys from the main secret key. These round keys are used in each round of the encryption process.
 
+Initial Round: The block undergoes an initial transformation (usually substitution or mixing).
 
+Rounds: Each round applies a series of transformations:
 
+Substitution: Replace parts of the block based on a substitution table (e.g., S-box).
+Permutation: Rearrange the bits or bytes of the block.
+XOR with round key: Combine the data with the round key using XOR.
+Final Round: After completing the rounds, the block becomes ciphertext. Some ciphers, like AES, perform an additional final round without certain operations like mixing.
 
-Progress log-
-First improved the input handling in my code, it now forces the user to input the correct digits using a while loop.
-Improved the efficiency of the algorithm itself.
-Im ready for a challenge, Ive decided to increase the complexity to a block cipher, I've worked with sorting algorithms that can split data into blocks its fairly simple, I will need to now follow this guideline below.
+Decryption: The decryption process reverses the encryption steps, using the same key but applying inverse operations (e.g., inverse S-boxes, inverse permutations).
 
-Steps in a Block Cipher Algorithm: 
-Key Expansion: The cipher takes the main secret key and derives several round keys from it. These round keys are used in each round of the encryption process. 
+To-Do 2.0:
 
-Initial Round: The block is processed through the first round of transformations (usually some kind of substitution or mixing). 
-
-Rounds: Each round applies a series of transformations, which usually include: 
-Substitution (replacing parts of the block based on a substitution table, like an S-box). 
-Permutation (rearranging the bits or bytes of the block). 
-XOR with round key (adding the round key to the data). 
-
-Final Round: After completing the rounds, the block is transformed into ciphertext. Some ciphers (like AES) perform one final round of operations, but without certain steps like mixing. 
-
-Decryption: The decryption process reverses all of these steps, using the same key but applying the inverse operations (e.g., inverse S-boxes, inverse permutations). 
-
-todo 2.0- implement key expansion, we need to decide how we'll manouver around creating and storing keys.
-Can begin crafting the the algorithm first, start taking data, splitting it into two.
-Use substitution, permutation and XOR the data(flip bits 0 becomes 1 etc). Refer to sorting algorithm notes to help here.
+Implement key expansion. We need to determine how to generate and store the keys securely.
+Start by developing the core algorithm and begin processing data by splitting it into two parts.
+Apply substitution, permutation, and XOR operations (flip bits, e.g., 0 becomes 1). Reference sorting algorithm notes for guidance on splitting data.
+Progress Log:
+Improved input handling by implementing a while loop that forces the user to input valid digits.
+Optimized the efficiency of the algorithm.
+Ready for a new challenge—decided to upgrade the Caesar cipher to a block cipher.
+Have experience with sorting algorithms that divide data into blocks, so implementing this should be straightforward.
+The next steps involve following the block cipher guidelines below.
+Overall for Today:
+Transitioned from a Caesar cipher to a block cipher algorithm that splits data into 4 blocks for encryption.
+The plan is to enhance the encryption process: the first block will undergo basic encryption, the second block will be encrypted based on the first, and so on for the other two blocks. This ensures a strong, reversible encryption process.
+The user’s designated password key will be stored securely (encrypted at rest) to maintain the integrity of the system.
