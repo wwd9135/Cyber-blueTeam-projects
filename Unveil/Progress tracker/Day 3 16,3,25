@@ -3,4 +3,4 @@ Project Log - Day [3] - Encryption Tool Progress
 Overall for Today:
 Transitioned from a Caesar cipher to a block cipher algorithm that splits data into 4 blocks for encryption.
 The plan is to enhance the encryption process: the first block will undergo basic encryption, the second block will be encrypted based on the first, and so on for the other two blocks. This ensures a strong, reversible encryption process.
-The user’s designated password key will be stored securely (encrypted at rest) to maintain the integrity of the system.
+The user’s designated password key will be stored securely (encrypted at rest) to maintain the integrity of the systems.
