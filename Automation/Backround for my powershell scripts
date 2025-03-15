@@ -1,28 +1,27 @@
-# Function to create a banner
+# Function to display the banner
 function Show-Banner {
     $banner = @"
-███████╗ ██████╗ ██████╗ ███████╗███████╗
-██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝
-█████╗  ██║   ██║██████╔╝█████╗  ███████╗
-██╔══╝  ██║   ██║██╔═══╝ ██╔══╝  ╚════██║
-██║     ╚██████╔╝██║     ███████╗███████║
-╚═╝      ╚═════╝ ╚═╝     ╚══════╝╚══════╝
-------------------------------------------
- Welcome to My Security Tool CLI
-------------------------------------------
+██    ██ ███    ██ ██    ██ ███████ ██ ██      
+██    ██ ████   ██ ██    ██ ██      ██ ██      
+██    ██ ██ ██  ██ ██    ██ █████   ██ ██      
+██    ██ ██  ██ ██ ██    ██ ██      ██ ██      
+ ██████  ██   ████  ██████  ██████    ██ ███████
+-----------------------------------------------
+          Welcome to Unveil CLI
+-----------------------------------------------
 "@
     Write-Host $banner -ForegroundColor Cyan
 }
 
-# Function for animated loading screen
+# Function for animated loading effect
 function Show-Loading {
     $spinner = @('|', '/', '-', '\')
-    Write-Host -NoNewline "Initializing "
+    Write-Host -NoNewline "Initializing Unveil "
     for ($i = 0; $i -lt 20; $i++) {
-        Write-Host -NoNewline "`rInitializing $($spinner[$i % $spinner.Length])"
+        Write-Host -NoNewline "`rInitializing Unveil $($spinner[$i % $spinner.Length])"
         Start-Sleep -Milliseconds 150
     }
-    Write-Host "`r[✔] Initialization Complete!   " -ForegroundColor Green
+    Write-Host "`r[✔] Unveil Loaded Successfully!   " -ForegroundColor Green
 }
 
 # Run Banner + Loading Animation
