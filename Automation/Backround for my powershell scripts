@@ -1,0 +1,31 @@
+# Function to create a banner
+function Show-Banner {
+    $banner = @"
+███████╗ ██████╗ ██████╗ ███████╗███████╗
+██╔════╝██╔═══██╗██╔══██╗██╔════╝██╔════╝
+█████╗  ██║   ██║██████╔╝█████╗  ███████╗
+██╔══╝  ██║   ██║██╔═══╝ ██╔══╝  ╚════██║
+██║     ╚██████╔╝██║     ███████╗███████║
+╚═╝      ╚═════╝ ╚═╝     ╚══════╝╚══════╝
+------------------------------------------
+ Welcome to My Security Tool CLI
+------------------------------------------
+"@
+    Write-Host $banner -ForegroundColor Cyan
+}
+
+# Function for animated loading screen
+function Show-Loading {
+    $spinner = @('|', '/', '-', '\')
+    Write-Host -NoNewline "Initializing "
+    for ($i = 0; $i -lt 20; $i++) {
+        Write-Host -NoNewline "`rInitializing $($spinner[$i % $spinner.Length])"
+        Start-Sleep -Milliseconds 150
+    }
+    Write-Host "`r[✔] Initialization Complete!   " -ForegroundColor Green
+}
+
+# Run Banner + Loading Animation
+Clear-Host
+Show-Banner
+Show-Loading
