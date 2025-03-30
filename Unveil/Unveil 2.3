@@ -1,0 +1,126 @@
+# This version integrates several methods of encryption, were taking the original cipher and majorly fucking that shit up
+
+# TODO- Build perm and sub methods, then figure out how to integrate into shift_3/Shift_4
+class Algorithm:
+    def __init__(self):
+        self.cipher_Text = "" #This will contain original 32 bit encrypted data.
+        self.final_output = ""
+        self.section1 = ""
+        self.section2 = ""
+        self.section3 = ""
+        self.section4 = ""
+        self.encryptionHeader = ["", ]
+
+    def taking_input(self):
+        print("############################################################################################################### \n Hi I'm Will, and I've developed a basic cipher to be used. \n The cipher is passed to this program through a txt file called final output!"
+    " This program will be taking this encrypted data, and apply more complex algorithms to it! "
+      "\n \n ################################################################################################################")
+        with open("finaloutput.txt", "r") as file:
+            # Skip the first line
+            next(file)
+            # Read the second line
+            self.cipher_Text = file.readline().strip()
+            print(f"This is the pre-algorithm input:\n{self.cipher_Text}")
+
+    def shifty(self):
+        # Ensure the string is divided into 4 sections
+        section_length = len(self.cipher_Text) // 4
+        remainder = len(self.cipher_Text) % 4
+
+        # Create the 4 sections, adding 1 extra character to the first few sections if there's a remainder
+        self.section1 = self.cipher_Text[:section_length + (1 if remainder > 0 else 0)]
+        self.section2 = self.cipher_Text[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        self.section3 = self.cipher_Text[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        self.section4 = self.cipher_Text[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        # Debugging: print the 4 sections
+        print(f"\nInitial Block 1: {self.section1}")
+        print(f"Initial Block 2: {self.section2}")
+        print(f"Initial Block 3: {self.section3}")
+        print(f"Initial Block 4: {self.section4}")
+
+        # Apply shifting to each section
+    def IV(self):
+        while True:
+            try:
+                self.IV = input("Please enter a two-digit number to initialize the algorithm: ")
+                # Ensure the input is a digit and exactly two characters long
+                if self.IV.isdigit() and len(self.IV) == 2:
+                    # Convert the IV input to an integer
+                    self.IV = int(self.IV)
+                    print(f"\nOur IV factor is: {self.IV}")
+                    self.encryptionHeader.append(self.IV)
+                    break
+                else:
+                    print("Error, enter a 2-digit number")
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def shift_one(self):
+        # This repeats the data 4 times
+        shifted_section1 = (int(self.section1 * 4))
+        self.section1 = (int(shifted_section1 * self.IV))
+        print(f"Block 1 final shift:", self.cipher_Text)
+        
+    #Basic block one used to alter block 2, still easy to decrypt when u know how this occured (Hackers wont)
+    def shift_two(self):
+        shifted_section2 = (int(self.section2 * 4))
+        self.section2 = (int(shifted_section2 * self.section1))
+        print("Block 2 almost done shift:", self.section2)
+    def perm(self):
+        print("perma")
+    def sub(self):
+        print("sub")
+
+    #This block will use substitution or permutation
+    def shift_three(self):
+        shifted_section3 = (self.section3 * 4)
+        # Allow the user to select the method
+        method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
+        if method_choice == "1":
+            self.perm()
+        elif method_choice == "2":
+            self.sub()
+        else:
+            print("Invalid choice.")
+        print(shifted_section3)
+
+
+
+    def shift_four(self):
+        # This block will use substitution or permutation and block 2's output 
+        shifted_section4  = (int(self.section4 * 4))
+        self.final_output = (int(shifted_section4 * self.section2))
+
+        method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
+        if method_choice == "1":
+            self.perm()
+        elif method_choice == "2":
+            self.sub()
+        else:
+            print("Invalid choice.")
+
+        print(self.final_output)
+        #print("Block 4 Initial shift 8 bit to 32 bit:", self.final_output)
+
+
+
+
+    #Apply an XOR to flip digits overall
+    def wombo_combo(self):
+        pass
+        #self.final_cipher = shifted_section1 + shifted_section2 + shifted_section3 + shifted_section4
+        # Print the final shifted cipher
+        #print(f"Final cipher: {self.final_cipher}")
+
+# Create an instance of the Algorithm class
+algo = Algorithm()
+
+# Call the taking_input method to load the text
+algo.taking_input()
+
+# Call the shifty method to modify the text and print the final cipher
+algo.shifty()
+algo.IV()
+algo.shift_one(),algo.shift_two(), algo.shift_three(), algo.shift_four()
+
