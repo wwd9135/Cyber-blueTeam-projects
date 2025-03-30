@@ -1,3 +1,4 @@
+
 import random
 #
 class Caesar:
@@ -62,7 +63,7 @@ class Caesar:
             return
 
         # Apply the shift based on the 6-digit number
-        shifted_digits = [(digit * self.shift) % 100000 for digit in self.digits]  # Use modulo 10 for each digit
+        shifted_digits = [(digit * self.shift) % 10 for digit in self.digits]  # Use modulo 10 for each digit
 
         # Print the original digits
         print(f"Original digits: {self.digits}")
