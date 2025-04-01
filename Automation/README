@@ -1,2 +1,7 @@
 This folder is showing some of my learning towards automation, paticularly powershell/ python using powershell etc.
-Im starting my role as a windows security infastructure engineer in 3 months, I want to.
+Im starting my role as a windows security infastructure engineer in 3 months, I want to be able to safely understand powershell scripts
+
+begin by creating a firewall updating script
+then a patch management (SSCM) script
+then a active directory script
+then a group policy script
