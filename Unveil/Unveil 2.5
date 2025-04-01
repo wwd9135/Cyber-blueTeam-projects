@@ -1,4 +1,9 @@
 #Work in progress, read todo list
+import sys
+
+# Increase the limit to a higher value, like 10000 or more
+sys.set_int_max_str_digits(10000)
+
 
 import hashlib
 import math
@@ -40,9 +45,9 @@ class Algorithm:
     def IV(self):
         while True:
             try:
-                self.IV = input("Please enter a twenty-digit number to initialize the algorithm: ")
-                if self.IV.isdigit() and len(self.IV) == 20:
-                    self.IV = int(self.IV)
+                self.IV = input("Please enter a two-digit number to initialize the algorithm: ")
+                if self.IV.isdigit() and len(self.IV) == 2:
+                    self.IV = int(self.IV )
                     print(f"\nOur IV factor is: {self.IV}")
                     self.encryptionHeader.append(self.IV)
                     break
@@ -131,28 +136,35 @@ class Algorithm:
         print(f"Number of 128-character chunks: {count_128}")
         
         # Loop through the string in steps of 128 characters
-        
         for j in range(count_128):
             start_index = j * 128  # Calculate start index for each chunk
             end_index = start_index + 128  # Calculate end index for each chunk
             bits = str_bits[start_index:end_index]  # Get the 128-character chunk
             
             List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
-            self.final_str = str(List('value'))  # Get the chunk value and convert it to a string
+            self.final_str = str(List['value'])  # Correctly access the 'value' key
             
             print("table:", List)  # Print the dictionary for the current chunk
             print(f"Final output is: {self.final_str}")  # Print the chunk
-    def hash(self):
-        combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
-        combined_bytes = combined_int.to_bytes((combined_int.bit_length() + 7) // 8, byteorder='big')
 
+    def hash(self):
+        # Make sure final_str is properly assigned as a string
+        final_str = str(self.final_str)
+        
+        # Encode the string to bytes
+        combined_bytes = final_str.encode('utf-8')
+
+        # Create the SHA-256 hash
         sha256 = hashlib.sha256()
         sha256.update(combined_bytes)
-        hash_256 = sha256.digest()
-        #hash_128 = hash_256[:16]
+        hash_256 = sha256.digest()  # The final hash (binary)
 
-        print(f"\nFinal hash of our data, storing this to ensure integrity of data during rest/transit:", hash_256.hex())
-        #print(f"The first 128 bits of the hash", hash_128.hex(),f"\n")
+        # Print the hash in hexadecimal format
+        print(f"\nFinal hash of our data, storing this to ensure integrity of data during rest/transit: {hash_256.hex()}")
+
+        # If you want the first 128 bits (16 bytes) of the hash
+        hash_128 = hash_256[:16]
+        print(f"The first 128 bits of the hash: {hash_128.hex()}")
 
 
 
@@ -169,5 +181,5 @@ algo.shift_one()
 algo.shift_two()
 algo.shift_three()
 algo.shift_four()
-algo.hash()
 algo.encrypt()
+algo.hash()
