@@ -1,6 +1,5 @@
-
 import random
-#
+
 class Caesar:
     def __init__(self, shift=None, digits=None):
         self.shift = shift  # Default to None if not provided
@@ -10,25 +9,23 @@ class Caesar:
     def take_digits(self):
         while True:
             try:
-                number = input("Enter a 32 digit number: ")
-
+                number = input("Enter a digit number: ")
+                
                 # Check if the input is a digit and its length is 32
-                if number.isdigit() and len(number) == 32:
-                    # Convert the string number to a list of digits (as integers)
+                if number.isdigit() :
                     self.digits = list(map(int, number))  # Each character as an integer
                     print(f"You entered: {self.digits}")
                     break  # Exit loop if valid input
                 else:
-                    print("Incorrect entry, please enter a 32 digit number.")
+                    print("Incorrect entry, digit number.")
             except ValueError as e:
                 print("An error occurred:", e)
-
 
     def take_shift(self):
         while True:
             try:
                 shift = input("\nEnter 6 digits you'd like to shift the string with: ")
-
+                
                 # Check if the input is a number and is exactly 6 digits long
                 if shift.isdigit() and len(shift) == 6:
                     self.shift = int(shift)  # Convert the shift to an integer
@@ -61,25 +58,26 @@ class Caesar:
         if not self.digits or self.shift is None:
             print("No digits or shift provided!")
             return
-
+        
         # Apply the shift based on the 6-digit number
-        shifted_digits = [(digit * self.shift) % 10 for digit in self.digits]  # Use modulo 10 for each digit
-
+        shifted_digits = [(digit + self.shift) % 10 for digit in self.digits]  # Add the shift and use modulo 10 for each digit
+        
         # Print the original digits
         print(f"Original digits: {self.digits}")
-
-        # Convert the list of shifted digits to a string without commas (using ' '.join or ''.join depending on your needs)
+        
+        # Convert the list of shifted digits to a string without commas
         shifted_digits_str = ''.join(str(digit) for digit in shifted_digits)  # Join digits without any separator
         print(f"Final Shifted digits: {shifted_digits_str}")
-
+        
         return shifted_digits
-
 
 # Example usage:
 caesar = Caesar()
-print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter"
-      " to these 32 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! "
+
+print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter" 
+      " to these 32 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! " 
       "\n \n ############################################################################################################################")
+
 caesar.take_digits()  # Prompt for a 32-digit number
 caesar.take_shift()   # Prompt for the shift digit
 caesar.algorithm()    # Apply the algorithm to modify the shift
