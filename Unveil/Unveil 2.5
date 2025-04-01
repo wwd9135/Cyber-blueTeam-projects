@@ -1,0 +1,173 @@
+#Work in progress, read todo list
+
+import hashlib
+import math
+class Algorithm:
+    def __init__(self):
+        self.cipher_Text = ""  # This will contain original 32-bit encrypted data.
+        self.final_output = ""
+        self.section1 = ""
+        self.section2 = ""
+        self.section3 = ""
+        self.section4 = ""
+        self.input = ""
+        self.encryptionHeader = ["", ]
+        self.final_str = ""
+
+    def taking_input(self):
+        print("############################################################################################################### \n Hi I'm Will, and I've developed a basic cipher to be used. \n The cipher is passed to this program through a txt file called final output! "
+              " This program will be taking this encrypted data, and apply more complex algorithms to it! "
+              "\n \n ################################################################################################################")
+        with open("finaloutput.txt", "r") as file:
+            next(file)  # Skip the first line
+            self.cipher_Text = file.readline().strip()
+            print(f"This is the pre-algorithm input:\n{self.cipher_Text}")
+
+    def shifty(self):
+        section_length = len(self.cipher_Text) // 4
+        remainder = len(self.cipher_Text) % 4
+
+        self.section1 = self.cipher_Text[:section_length + (1 if remainder > 0 else 0)]
+        self.section2 = self.cipher_Text[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        self.section3 = self.cipher_Text[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        self.section4 = self.cipher_Text[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        print(f"\nInitial Block 1: {self.section1}")
+        print(f"Initial Block 2: {self.section2}")
+        print(f"Initial Block 3: {self.section3}")
+        print(f"Initial Block 4: {self.section4}")
+
+    def IV(self):
+        while True:
+            try:
+                self.IV = input("Please enter a twenty-digit number to initialize the algorithm: ")
+                if self.IV.isdigit() and len(self.IV) == 20:
+                    self.IV = int(self.IV)
+                    print(f"\nOur IV factor is: {self.IV}")
+                    self.encryptionHeader.append(self.IV)
+                    break
+                else:
+                    print("Error, enter a twenty-digit number")
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def create_substitution_box(self):
+        self.substitution_box = {
+            'A': 'D', 'B': 'E', 'C': 'F', 'D': 'G', 'E': 'H',
+            'F': 'I', 'G': 'J', 'H': 'K', 'I': 'L', 'J': 'M',
+            'K': 'N', 'L': 'O', 'M': 'P', 'N': 'Q', 'O': 'R',
+            'P': 'S', 'Q': 'T', 'R': 'U', 'S': 'V', 'T': 'W',
+            'U': 'X', 'V': 'Y', 'W': 'Z', 'X': 'A', 'Y': 'B', 'Z': 'C'
+        }
+
+    def sub(self, input):
+        self.create_substitution_box()
+        substituted_string = ""
+
+        for char in input:
+            if char in self.substitution_box:
+                substituted_string += self.substitution_box[char]
+            else:
+                substituted_string += char
+
+        print(f"Substituted string: {substituted_string}")
+        return substituted_string
+
+    def shift_one(self):
+        shifted_section1 = int(self.section1, 16)
+        self.section1 = shifted_section1 * self.IV
+        print(f"Block 1 final shift:", self.section1)
+
+    def shift_two(self):
+        shifted_section2 = int(self.section2, 16)
+        self.section2 = shifted_section2 * self.section1
+        print("Block 2 final shift:", self.section2)
+
+    def perm(self, input):
+        input_str = str(input)
+        section_length = len(input_str) // 4
+        remainder = len(input_str) % 4
+
+        section1 = input_str[:section_length + (1 if remainder > 0 else 0)]
+        section2 = input_str[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        section3 = input_str[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        section4 = input_str[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        combo = [section1, section2, section3, section4]
+        perm_scheme = [1, 4, 2, 3]
+        permuted_blocks = [None] * len(combo)
+
+        for i, new_position in enumerate(perm_scheme):
+            permuted_blocks[new_position - 1] = combo[i]
+
+        final = ''.join(permuted_blocks)
+        print(f"Permuted blocks: {permuted_blocks}")
+        print(f"Final result: {final}")
+
+    def shift_three(self):
+        method_choice = input("Choose a method for shift_three: (1) perm (2) sub: ")
+        if method_choice == "1":
+            self.perm(self.section3)
+        elif method_choice == "2":
+            self.sub(self.section3)
+        else:
+            print("Invalid choice.")
+
+    def shift_four(self):
+        method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
+        if method_choice == "1":
+            self.perm(self.section4)
+        elif method_choice == "2":
+            self.sub(self.section4)
+        else:
+            print("Invalid choice.")
+
+    def encrypt(self):
+        combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
+        str_bits = str(combined_int)
+        
+        # Calculate how many 128-character chunks fit into the total length
+        count_128 = math.ceil(len(str_bits) / 128)
+        print(f"Number of 128-character chunks: {count_128}")
+        
+        # Loop through the string in steps of 128 characters
+        
+        for j in range(count_128):
+            start_index = j * 128  # Calculate start index for each chunk
+            end_index = start_index + 128  # Calculate end index for each chunk
+            bits = str_bits[start_index:end_index]  # Get the 128-character chunk
+            
+            List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
+            self.final_str = str(List('value'))  # Get the chunk value and convert it to a string
+            
+            print("table:", List)  # Print the dictionary for the current chunk
+            print(f"Final output is: {self.final_str}")  # Print the chunk
+    def hash(self):
+        combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
+        combined_bytes = combined_int.to_bytes((combined_int.bit_length() + 7) // 8, byteorder='big')
+
+        sha256 = hashlib.sha256()
+        sha256.update(combined_bytes)
+        hash_256 = sha256.digest()
+        #hash_128 = hash_256[:16]
+
+        print(f"\nFinal hash of our data, storing this to ensure integrity of data during rest/transit:", hash_256.hex())
+        #print(f"The first 128 bits of the hash", hash_128.hex(),f"\n")
+
+
+
+        
+
+
+
+# Create an instance of the Algorithm class
+algo = Algorithm()
+algo.taking_input()
+algo.shifty()
+algo.IV()
+algo.shift_one()
+algo.shift_two()
+algo.shift_three()
+algo.shift_four()
+algo.hash()
+algo.encrypt()
