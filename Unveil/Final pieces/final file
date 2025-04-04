@@ -1,0 +1,377 @@
+import hashlib
+import math
+import importlib.util
+import sys
+import random
+
+#from docx import Document
+
+class Caller:
+    def __init__(self) -> None:
+        self.data = ""
+
+    def txt_import(self):
+        try:
+            with open(input("Enter your text file name: "), "r") as file:
+                # Read the file contents
+                contents = file.read()  # Reads the entire file as a string
+                binary_representation = ''.join(format(ord(c), '08b') for c in contents)
+                self.data = binary_representation
+                print(contents)
+                print("Binary Representation of the text file:")
+                print(binary_representation)
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def img(self):
+        try:
+            with open(input("Enter your image file name: "), "rb") as file:
+                # Open the image file contents in binary mode
+                contents = file.read()
+                print("Binary data of the image (first 100 bytes):")
+                print(contents[:100])  # Print the first 100 bytes for preview
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def docx(self):
+        pass
+        try:
+            file_name = input("Enter your docx file name: ")
+            doc = Document(file_name)
+
+            # Read and print all paragraphs in the document
+            print("Contents of the .docx file:")
+            for para in doc.paragraphs:
+                print(para.text)
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def decider(self):
+        while True:
+            try:
+                choice = int(input("Choose options from the following: img(1), txt(2), docx(3): "))
+                if choice == 1:
+                    self.img()
+                    break
+                elif choice == 2:
+                    self.txt_import()
+                    break
+                elif choice == 3:
+                    self.docx()
+                    break
+                else:
+                    print("Incorrect entry: Please choose one of the 3 provided options.")
+            except ValueError as e:
+                print("An error occurred:", e)
+                continue  # Continue the loop if there's an invalid entry
+
+
+class Caesar:
+    def __init__(self, caller_instance, shift=None):
+        self.shift = shift  # Default to None if not provided
+        self.database = []  # Initialize the database as an empty list
+        self.caller_data = caller_instance.data  # Access 'data' from Caller class
+        self.encryptionHeader = ["",]
+
+    def errorCheck(self):
+        while True:
+            try: 
+                self.caller_data  # Access 'data' from Caller class
+                if all(bit in '01' for bit in self.caller_data):
+                    # The data is binary (only contains 0's and 1's)
+                    print("Data is binary!")
+                    break  # Break the loop once the data is valid
+                else:
+                    # The data is not binary
+                    print("Data is not binary!")
+                    caller_instance.decider()  # Re-run the decider if not binary
+                    return  # Ensure we don't re-enter the errorCheck loop
+            except ValueError as e:
+                print("An error occurred:", e)
+                break  # In case of ValueError, break the loop
+
+    def take_shift(self):
+        while True:
+            try:
+                shift = input("\nEnter 6 digits you'd like to shift the string with: ")
+                
+                # Check if the input is a number and is exactly 6 digits long
+                if shift.isdigit() and len(shift) == 6:
+                    self.shift = int(shift)  # Convert the shift to an integer
+                    print(f"You entered: {shift}")
+                    self.encryptionHeader.append(self.shift)
+                    return self.encryptionHeader
+                    
+                else:
+                    print("Incorrect entry: please enter 6 digits for the shift.")
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def caeser(self):
+        # Apply the Caesar cipher shift to each digit in the binary string
+        if not self.caller_data or self.shift is None:
+            print("No data or shift provided!")
+            return None  # Return None if there's no data or shift
+        
+        # Apply the shift to each binary digit (convert to integer for shifting)
+        shifted_binary = [(int(binary) + self.shift) % 2 for binary in self.caller_data]  # Shift binary digits
+        
+        # Print the original binary data
+        print(f"Original binary data: {self.caller_data}")
+        
+        # Convert the list of shifted binary digits back to a string
+        shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)
+        print(f"\nFinal Shifted binary: {shifted_binary_str}")
+        
+        # Return the shifted binary list
+        return shifted_binary  # Corrected to return shifted_binary, not shifted_binary_str
+
+
+
+# Create an instance of the Caller class
+caller_instance = Caller()
+
+# Start the decider method to make file handling decisions
+caller_instance.decider()
+print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter" 
+      " to these 32 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! " 
+      "\n \n ############################################################################################################################")
+
+# Example usage:
+caesar = Caesar(caller_instance)  # Pass caller_instance to Caesar
+
+caesar.errorCheck()  # Check if the data is binary
+caesar.take_shift()   # Prompt for the shift digit
+shifted_binary = caesar.caeser()  # Apply the Caesar cipher shift
+
+# Writing the result to a file
+# Writing the result to a file
+if shifted_binary is not None:  # Ensure the shifted binary is valid
+    shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)  # Convert to string
+    print(f"Writing the following data to the file: {shifted_binary_str}")  # Debugging step
+
+    with open("dis.txt", "w") as file:  # Use "w" mode to overwrite the file
+        file.write(f"The final outputted hash is:\n{shifted_binary_str}")
+        file.flush()  # Explicitly flush the file buffer
+        print("Data successfully written to the file.")
+else:
+    print("No shifted binary data available to write to the file.")
+
+
+
+
+
+
+
+
+# Increase the limit to a higher value, like 10000 or more
+sys.set_int_max_str_digits(10000)
+
+class Algorithm:
+    def __init__(self, caesar_instance):  # Pass Caesar instance to Algorithm
+        self.cipher_Text = ""
+        self.final_output = ""
+        self.section1 = ""
+        self.section2 = ""
+        self.section3 = ""
+        self.section4 = ""
+        self.input = ""
+        self.encryptionHeader = []
+        self.final_str = ""
+        self.caesar_instance = caesar_instance  # Store the caesar_instance to access self.shift
+
+
+    def taking_input(self):
+        print("############################################################################################################### \n Hi I'm Will, and I've developed a basic cipher to be used. \n The cipher is passed to this program through a txt file called final output! "
+              " This program will be taking this encrypted data, and apply more complex algorithms to it! "
+              "\n \n ################################################################################################################")
+        with open("dis.txt", "r") as file:
+            next(file)  # Skip the first line
+            self.cipher_Text = file.readline().strip()
+            print(f"This is the pre-algorithm input:\n{self.cipher_Text}")
+
+    def shifty(self):
+        section_length = len(self.cipher_Text) // 4
+        remainder = len(self.cipher_Text) % 4
+
+        self.section1 = self.cipher_Text[:section_length + (1 if remainder > 0 else 0)]
+        self.section2 = self.cipher_Text[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        self.section3 = self.cipher_Text[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        self.section4 = self.cipher_Text[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        print(f"\nInitial Block 1: {self.section1}")
+        print(f"Initial Block 2: {self.section2}")
+        print(f"Initial Block 3: {self.section3}")
+        print(f"Initial Block 4: {self.section4}")
+
+    def IV(self):
+        while True:
+            try:
+                self.IV = input("Please enter a two-digit number to initialize the algorithm: ")
+                if self.IV.isdigit() and len(self.IV) == 2:
+                    self.IV = int(self.IV)
+                    print(f"\nOur IV factor is: {self.IV}")
+                    self.encryptionHeader.append(f"IV: {self.IV}")
+                    break
+                else:
+                    print("Error, enter a two-digit number")
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def create_substitution_box(self):
+        self.substitution_box = {
+            'A': 'D', 'B': 'E', 'C': 'F', 'D': 'G', 'E': 'H',
+            'F': 'I', 'G': 'J', 'H': 'K', 'I': 'L', 'J': 'M',
+            'K': 'N', 'L': 'O', 'M': 'P', 'N': 'Q', 'O': 'R',
+            'P': 'S', 'Q': 'T', 'R': 'U', 'S': 'V', 'T': 'W',
+            'U': 'X', 'V': 'Y', 'W': 'Z', 'X': 'A', 'Y': 'B', 'Z': 'C'
+        }
+
+    def sub(self, input):
+        self.create_substitution_box()
+        substituted_string = ""
+
+        for char in input:
+            if char in self.substitution_box:
+                substituted_string += self.substitution_box[char]
+            else:
+                substituted_string += char
+
+        print(f"Substituted string: {substituted_string}")
+        return substituted_string
+
+    def shift_one(self):
+        shifted_section1 = int(self.section1, 16)
+        self.section1 = shifted_section1 * self.IV
+        print(f"Block 1 final shift:", self.section1)
+
+    def shift_two(self):
+        shifted_section2 = int(self.section2, 16)
+        self.section2 = shifted_section2 * self.section1
+        print("Block 2 final shift:", self.section2)
+
+    def perm(self, input):
+        input_str = str(input)
+        section_length = len(input_str) // 4
+        remainder = len(input_str) % 4
+
+        section1 = input_str[:section_length + (1 if remainder > 0 else 0)]
+        section2 = input_str[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        section3 = input_str[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        section4 = input_str[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        combo = [section1, section2, section3, section4]
+        perm_scheme = [1, 4, 2, 3]
+        permuted_blocks = [None] * len(combo)
+
+        for i, new_position in enumerate(perm_scheme):
+            permuted_blocks[new_position - 1] = combo[i]
+
+        final = ''.join(permuted_blocks)
+        print(f"Permuted blocks: {permuted_blocks}")
+        print(f"Final result: {final}")
+
+    def shift_three(self):
+        method_choice = input("Choose a method for shift_three: (1) perm (2) sub: ")
+        
+        if method_choice == "1":
+            self.perm(self.section3)
+        elif method_choice == "2":
+            self.sub(self.section3)
+        else:
+            print("Invalid choice.")
+
+    def shift_four(self):
+        method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
+        if method_choice == "1":
+            self.perm(self.section4)
+        elif method_choice == "2":
+            self.sub(self.section4)
+        else:
+            print("Invalid choice.")
+
+    def encrypt(self):
+        combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
+        str_bits = str(combined_int)
+        
+        # Calculate how many 128-character chunks fit into the total length
+        count_128 = math.ceil(len(str_bits) / 128)
+        print(f"Number of 128-character chunks: {count_128}")
+        
+        # Loop through the string in steps of 128 characters
+        for j in range(count_128):
+            start_index = j * 128  # Calculate start index for each chunk
+            end_index = start_index + 128  # Calculate end index for each chunk
+            bits = str_bits[start_index:end_index]  # Get the 128-character chunk
+            
+            List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
+            self.final_str = int(List['value'])  # Correctly access the 'value' key
+            self.final_str = bin(self.final_str)
+            #print(binary_representation)  # Output: 0b101010
+            
+            print("table:", List)  # Print the dictionary for the current chunk
+            print(f"Final output is: {self.final_str}")  # Print the chunk
+
+    def hash(self):
+        # Make sure final_str is properly assigned as a string
+        final_str = str(self.final_str)
+        shift_value = self.caesar_instance.shift  # Access the shift value from Caesar instance
+        # Encode the string to bytes
+        combined_bytes = final_str.encode('utf-8')
+
+        # Create the SHA-256 hash
+        sha256 = hashlib.sha256()
+        sha256.update(combined_bytes)
+        hash_256 = sha256.digest()  # The final hash (binary)
+
+        # Print the hash in hexadecimal format
+        print(f"\nFinal hash of our data, storing this to ensure integrity of data during rest/transit: {hash_256.hex()}")
+
+        # If you want the first 128 bits (16 bytes) of the hash
+        hash_128 = hash_256[:16]
+        print(f"The first 128 bits of the hash: {hash_128.hex()}")
+
+        # Append encryption details to encryptionHeader
+        #self.encryptionHeader.append(f"This is the caeser cipher used: {str(self.shift)}")
+        print("\n")
+        self.encryptionHeader.append(f"This is the shifting value {str(shift_value)}")
+        self.encryptionHeader.append(f"This is the hash value: {str(hash_256.hex())}")
+        self.encryptionHeader.append(f"This is the final encrypted string: {self.final_str}")
+
+        # Write the encryption header to a file
+        result = "\n".join(self.encryptionHeader)
+        with open("output.txt", "w") as file:
+            file.write(result)  # Write the joined string
+
+        # Read back the content and print it
+        with open("output.txt", "r") as file:
+            s = file.read()
+            print("Encryption header: ", s)
+
+
+
+
+
+shifted_binary = caesar.caeser()  # Apply the Caesar cipher shift
+
+# After this, the shift value should be correctly set in the Caesar instance.
+
+# Now proceed with the Algorithm class, ensuring it's properly passed the Caesar instance
+EncryptionH_instance = caesar  # Use the caesar instance after setting the shift
+
+algo = Algorithm(EncryptionH_instance)  # Pass the Caesar instance to Algorithm
+algo.taking_input()
+algo.shifty()
+algo.IV()
+algo.shift_one()
+algo.shift_two()
+algo.shift_three()
+algo.shift_four()
+algo.encrypt()
+algo.hash()  # Now this method can access the shift value
