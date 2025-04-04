@@ -1,0 +1,162 @@
+import random
+#from docx import Document
+
+class Caller:
+    def __init__(self) -> None:
+        self.data = ""
+
+    def txt_import(self):
+        try:
+            with open(input("Enter your text file name: "), "r") as file:
+                # Read the file contents
+                contents = file.read()  # Reads the entire file as a string
+                binary_representation = ''.join(format(ord(c), '08b') for c in contents)
+                self.data = binary_representation
+                print("Binary Representation of the text file:")
+                print(binary_representation)
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def img(self):
+        try:
+            with open(input("Enter your image file name: "), "rb") as file:
+                # Open the image file contents in binary mode
+                contents = file.read()
+                print("Binary data of the image (first 100 bytes):")
+                print(contents[:100])  # Print the first 100 bytes for preview
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def docx(self):
+        pass
+        try:
+            file_name = input("Enter your docx file name: ")
+            doc = Document(file_name)
+
+            # Read and print all paragraphs in the document
+            print("Contents of the .docx file:")
+            for para in doc.paragraphs:
+                print(para.text)
+        except FileNotFoundError:
+            print("Error: The file was not found.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def decider(self):
+        while True:
+            try:
+                choice = int(input("Choose options from the following: img(1), txt(2), docx(3): "))
+                if choice == 1:
+                    self.img()
+                    break
+                elif choice == 2:
+                    self.txt_import()
+                    break
+                elif choice == 3:
+                    self.docx()
+                    break
+                else:
+                    print("Incorrect entry: Please choose one of the 3 provided options.")
+            except ValueError as e:
+                print("An error occurred:", e)
+                continue  # Continue the loop if there's an invalid entry
+
+
+class Caesar:
+    def __init__(self, shift=None, digits=None):
+        self.shift = shift  # Default to None if not provided
+        self.database = []  # Initialize the database as an empty list
+        self.caller_data = caller_instance.data  # Access 'data' from Caller class
+
+    def errorCheck(self):
+        while True:
+            try: 
+                self.caller_data  # Access 'data' from Caller class
+                if all(bit in '01' for bit in self.caller_data):
+                    # The data is binary (only contains 0's and 1's)
+                    print("Data is binary!")
+                    break
+                else:
+                    # The data is not binary
+                    print("Data is not binary!")
+                    caller_instance.decider()  # Re-run the decider if not binary
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def take_shift(self):
+        while True:
+            try:
+                shift = input("\nEnter 6 digits you'd like to shift the string with: ")
+                
+                # Check if the input is a number and is exactly 6 digits long
+                if shift.isdigit() and len(shift) == 6:
+                    self.shift = int(shift)  # Convert the shift to an integer
+                    print(f"You entered: {shift}")
+                    break  # Exit loop if valid input
+                else:
+                    print("Incorrect entry: please enter 6 digits for the shift.")
+            except ValueError as e:
+                print("An error occurred:", e)
+
+    def algorithm(self):
+        # The algorithm method will modify the shift value by a random number multiplier
+        if self.shift is not None:
+            print(f"Increased shift: {self.shift} ")
+        return self.shift
+
+    def combination(self):
+        if self.caller_data is not None and self.shift is not None:
+            # Add the number and shift combination to the database
+            self.database.append((self.caller_data, self.shift))
+            print(f"Combination added to database: {self.caller_data} with shift {self.shift}")
+            print(self.database)
+        else:
+            print("Please enter both a valid number and shift before combining.")
+
+    def caeser(self):
+        # Apply the Caesar cipher shift to each digit in the binary string
+        if not self.caller_data or self.shift is None:
+            print("No data or shift provided!")
+            return
+        
+        # Apply the shift to each binary digit (convert to integer for shifting)
+        shifted_binary = [(int(binary) + self.shift) % 2 for binary in self.caller_data]  # Shift binary digits
+        
+        # Print the original binary data
+        print(f"Original binary data: {self.caller_data}")
+        
+        # Convert the list of shifted binary digits back to a string
+        shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)
+        print(f"\nFinal Shifted binary: {shifted_binary_str}")
+        
+        return shifted_binary
+
+
+# Create an instance of the Caller class
+caller_instance = Caller()
+
+# Start the decider method to make file handling decisions
+caller_instance.decider()
+
+# Example usage:
+caesar = Caesar(shift=5, digits=None)  # Using a sample shift for the Caesar cipher
+
+print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter" 
+      " to these 32 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! " 
+      "\n \n ############################################################################################################################")
+
+caesar.errorCheck()  # Check if the data is binary
+caesar.take_shift()   # Prompt for the shift digit
+caesar.algorithm()    # Apply the algorithm to modify the shift
+caesar.combination()  # Add the combination to the database
+shifted_binary = caesar.caeser()  # Apply the Caesar cipher shift
+
+# Writing the result to a file
+shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)
+with open("finaloutput.txt", "w") as file:
+    file.write(f"The final outputted hash is:\n {shifted_binary_str}")
+
