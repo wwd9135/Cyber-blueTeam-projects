@@ -1,3 +1,5 @@
 # This program will take the self.final_str and reverse it till i reaches the input value.
 # TODO- create a basic input from unveil program, one that can be replicated consistently for testing-
 # This means I will be able to know exactly what data to look for at each step of the way!
+# Steps for encrypt- choose txt, flag.txt file name, 123456 shift, 1, 1 options for block 3/4 (need to add this to enc header)
+# And the data from enc header.
