@@ -1,3 +1,10 @@
+# This is the combination of my caeser cipher program and my encryption algorithm program.
+# I have integrated them together and added functionality to take img,txt, word .docx etc.
+# Next steps are improving the algorithm and creating a decryptor using the encryption header.
+
+
+
+
 import hashlib
 import math
 import importlib.util
