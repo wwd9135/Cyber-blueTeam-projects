@@ -1,0 +1,3 @@
+# This program will take the self.final_str and reverse it till i reaches the input value.
+# TODO- create a basic input from unveil program, one that can be replicated consistently for testing-
+# This means I will be able to know exactly what data to look for at each step of the way!
