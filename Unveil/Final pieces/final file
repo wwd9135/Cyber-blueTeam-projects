@@ -2,16 +2,10 @@
 # I have integrated them together and added functionality to take img,txt, word .docx etc.
 # Next steps are improving the algorithm and creating a decryptor using the encryption header.
 
-
-
-
 import hashlib
 import math
 import importlib.util
 import sys
-import random
-
-#from docx import Document
 
 class Caller:
     def __init__(self) -> None:
@@ -146,8 +140,8 @@ caller_instance = Caller()
 
 # Start the decider method to make file handling decisions
 caller_instance.decider()
-print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, you will choose 6 digits and a shifter! \n I will then apply the shifter" 
-      " to these 32 digits. 123456 with a shift of 6 will become 7,8,9,10,11,12,13! " 
+print("############################################################################################################################# \n Hi I'm Will, and I've developed a basic cipher to be used. \n This is a Caesar cipher, a txt, doc or img file, which will be changed to binary! \n I will then apply the shifter" 
+      " Which will alter the binary by a value the user chooses.  " 
       "\n \n ############################################################################################################################")
 
 # Example usage:
@@ -157,7 +151,7 @@ caesar.errorCheck()  # Check if the data is binary
 caesar.take_shift()   # Prompt for the shift digit
 shifted_binary = caesar.caeser()  # Apply the Caesar cipher shift
 
-# Writing the result to a file
+
 # Writing the result to a file
 if shifted_binary is not None:  # Ensure the shifted binary is valid
     shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)  # Convert to string
@@ -177,7 +171,7 @@ else:
 
 
 
-# Increase the limit to a higher value, like 10000 or more
+# Increase the limit to a higher value
 sys.set_int_max_str_digits(10000)
 
 class Algorithm:
@@ -303,27 +297,49 @@ class Algorithm:
         else:
             print("Invalid choice.")
 
+
+        
+
+    # Function to XOR two binary strings
+    def xor_binary(self,data, key):
+        # Ensure the key is long enough by repeating it if needed
+        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]
+        # XOR each bit
+        result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
+        print("THIS IS RESULT TEST: ", result)
+        return result
+
+
     def encrypt(self):
         combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
-        str_bits = str(combined_int)
+        
+        # Convert to binary and remove '0b' prefix
+        str_bits = bin(combined_int)[2:]
         
         # Calculate how many 128-character chunks fit into the total length
         count_128 = math.ceil(len(str_bits) / 128)
         print(f"Number of 128-character chunks: {count_128}")
         
         # Loop through the string in steps of 128 characters
+        key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
+        
         for j in range(count_128):
             start_index = j * 128  # Calculate start index for each chunk
             end_index = start_index + 128  # Calculate end index for each chunk
             bits = str_bits[start_index:end_index]  # Get the 128-character chunk
             
             List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
-            self.final_str = int(List['value'])  # Correctly access the 'value' key
-            self.final_str = bin(self.final_str)
-            #print(binary_representation)  # Output: 0b101010
+            self.final_str = int(List['value'], 2)  # Convert the binary string to an integer
             
+            # Convert the integer back to binary
+            self.final_str = bin(self.final_str)[2:]
+            
+            # XOR the binary string with the key
+            s = self.xor_binary(self.final_str, key)
+
             print("table:", List)  # Print the dictionary for the current chunk
-            print(f"Final output is: {self.final_str}")  # Print the chunk
+            print(f"Final output is: {s}")  # Print the chunk's XOR result
+
 
     def hash(self):
         # Make sure final_str is properly assigned as a string
