@@ -5,24 +5,152 @@
 # And the data from enc header, we also need to undo all instances of the table which will
 # be close to impossible without altering unveil
 
-
-
-
-
-# Retrieving all rows from table that were combined to form the self.final_str string-
-# is going to be impossible: lets get it done!
-# I will first change unveil, i now only want the hash from its output, not the single enc str.
+import math
 
 class decryptor:
     def __init__(self) -> None:
-        self.encryptionHeader = ["",]
         self.final = ""
+        self.Table = []
+        self.input = []
+        self.cipher_Text = ""
+        self.final_output = ""
+        self.section1 = ""
+        self.section2 = ""
+        self.section3 = ""
+        self.section4 = ""
+        self.encryptionHeader = []
+        self.final_str = ""
+        self.List = []
+        #Encryption header instance variables:
+        self.IV = ""
+        self.hash = ""
+        self.encryptionHeader = ["",] #Full table
+        self.shiftValue = ""  #Caeser
+        self.fileType = "" #txt,doc,img from caller class.
+        
+
+    #TODO- this function is going to be the most important part, i intend to take the encryption header
+    #As a file or variable, then disect each row using the same order it was entered
+    #Filling the self.variales in the process
+    def TakingInput(self,input):
+        self.input = input
+        return(input)
 
     
-    def TakingInput(self,input):
+    # Function to XOR two binary strings
+    def xor_binary(self, data, key):
+        # Ensure the key is long enough by repeating it if needed
+        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]
+        # XOR each bit
+        result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
+        return result
+
+    def decrypt(self):
+        combined_int = self.input
+        # Calculate how many 128-character chunks fit into the total length
+        
+        count_128 = math.ceil(len(combined_int) / 128)
+        print(f"Number of 128-character chunks: {count_128}")
+        
+        # Initialize a list to store all encrypted blocks
+        all_encrypted_blocks = []
+        
+        # Loop through the string in steps of 128 characters
+        key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
+        
+        for j in range(count_128):
+            start_index = j * 128  # Calculate start index for each chunk
+            end_index = start_index + 128  # Calculate end index for each chunk
+            bits = combined_int[start_index:end_index]  # Get the 128-character chunk
+            
+            self.List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
+            self.final_str = int(self.List['value'], 2)  # Convert the binary string to an integer
+            
+            # Convert the integer back to binary
+            self.final_str = bin(self.final_str)[2:]
+            
+            print("table:", self.List)  # Print the dictionary for the current chunk
+            
+            # XOR the binary string with the key
+            s = self.xor_binary(self.final_str, key)
+            
+            # Print the XOR result
+            print(f"XOR result for block {j}: {s}")
+            
+            # Append the result to the list of all encrypted blocks
+            all_encrypted_blocks.append(s)
+        
+        # After processing all blocks, you can join them into a single string or do something else
+        final_decrypted_string = ''.join(all_encrypted_blocks)
+        #TODO- split this into 4 sections somehow-
+        combined_int = final_decrypted_string
+
+
+        print(f"Final decrypted result: {final_decrypted_string}")
+        return final_decrypted_string  # You can return this if needed
+    
+    def perm(self,input):
+        #TODO- reverse every part of this, pass input using encrypt header.
+        pass
+    def create_substitution_box(self):
+            self.substitution_box = {
+                'A': 'D', 'B': 'E', 'C': 'F', 'D': 'G', 'E': 'H',
+                'F': 'I', 'G': 'J', 'H': 'K', 'I': 'L', 'J': 'M',
+                'K': 'N', 'L': 'O', 'M': 'P', 'N': 'Q', 'O': 'R',
+                'P': 'S', 'Q': 'T', 'R': 'U', 'S': 'V', 'T': 'W',
+                'U': 'X', 'V': 'Y', 'W': 'Z', 'X': 'A', 'Y': 'B', 'Z': 'C'
+            }
+    def sub(self,input):
+        pass
+
+    def shift_four(self):
+        self.method_choice4 = 1 #THIS NEEDS ALTERED
+        if self.method_choice4 == "1":
+            self.perm(self.section4)
+        elif self.method_choice4 == "2":
+            self.sub(self.section4)
+        else:
+            print("Data missing shift 4")
+    def shift_three(self):
+        self.method_choice4 = 1 #THIS NEEDS ALTERED
+        if self.method_choice4 == "1":
+            self.perm(self.section3)
+        elif self.method_choice4 == "2":
+            self.sub(self.section3)
+        else:
+            print("Data missing shift 3")
+    def IV(self):
+        pass
+        self.IV
+
+    def shifty(self):
+        #This function will undo the original shifting
         pass
 
 
-    def undo(self):
+    def caeserShift(self):
         pass
-        #First we need to retrieve all 
+        self.caeserShift
+
+
+    def txt_export(self):
+        pass
+    def img_export(self):
+        pass
+    def docx_export(self):
+        pass
+    
+    #TODO- make a nice display to show off the final output
+    def display(self):
+        pass
+        self.final        
+    
+
+        
+
+input =  110011011111101100111000111100011011010100110111001000001010100010001010001101100000110100110010100011000000101000011010000100001110001110000001001010101011001011010111111101010011110111110011100110110111111010110111011111101000010101111100010101100011110100111010110000010100000110111000001110001100011110100100101111110000111001011100111111001011001101011001100011001111100001011101000000000000100010001100010011101111100111000111001011101011101011011000011001011000000110100100011100000111100001111110010110010101000010001111011011010110011011010111010010011000110001110100110001011010011100001110111001011000101101000100110111111000001111001001101101110110101111011000100101010100010011000010011100100011011110110011100010011010110100101111011111110100000101110111101100000111101110000001000110111010100101110000001101101100111011011101110110101010000011110111110110110100111001001000001111111000110101001011100011111100001000110111001111011101100001010010001100110001010011110000111101011101011001000010011111100101101011111101011111011010010011001101000000011000100000110111011001000000110010000001001010001000001100110100010001111101110111100001010000110001010010100001010000011010000011110010001000001101111100000011100100001010110111001111011001100010111000011011101001100101111101110101100101010001011101100001010111100000100110101011000100101101010111100111101000100110010100101010011010011101100000001001000101111011111110011010011100110001011010011011100111111010100010101010001101101110010101110100110110011111011001100100011101000011110110001110101011110101100111111000100010011010011110110011000010010110111000100111111110011001010011000111111100011000001001001100001011010101011001100100100111000111101011000010101000001010011000101100011000101111010100100010100110011110101011111010011001010110000000110011010011000101010010010000001111000011000000010111000011110001001010100111111110111100000001101101010111111010001001111110100110011101101101101100011101100101100110101110100010010101010111100111000100111000011011100101111111001010100111001100101101011001011011000010110110001101001110001100000101101110110110010011110000110001011110110001111101100010110111101110100111000010110100101000110000100101100010100000101111011
+
+decryptor_instance = decryptor()
+print("This is our encrypted binary data: ",decryptor_instance.TakingInput(input))
+decryptor_instance.decrypt()
+
