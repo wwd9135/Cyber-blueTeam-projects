@@ -2,4 +2,27 @@
 # TODO- create a basic input from unveil program, one that can be replicated consistently for testing-
 # This means I will be able to know exactly what data to look for at each step of the way!
 # Steps for encrypt- choose txt, flag.txt file name, 123456 shift, 1, 1 options for block 3/4 (need to add this to enc header)
-# And the data from enc header.
+# And the data from enc header, we also need to undo all instances of the table which will
+# be close to impossible without altering unveil
+
+
+
+
+
+# Retrieving all rows from table that were combined to form the self.final_str string-
+# is going to be impossible: lets get it done!
+# I will first change unveil, i now only want the hash from its output, not the single enc str.
+
+class decryptor:
+    def __init__(self) -> None:
+        self.encryptionHeader = ["",]
+        self.final = ""
+
+    
+    def TakingInput(self,input):
+        pass
+
+
+    def undo(self):
+        pass
+        #First we need to retrieve all 
