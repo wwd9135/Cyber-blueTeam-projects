@@ -1,10 +1,3 @@
-# This program will take the self.final_str and reverse it till i reaches the input value.
-# TODO- create a basic input from unveil program, one that can be replicated consistently for testing-
-# This means I will be able to know exactly what data to look for at each step of the way!
-# Steps for encrypt- choose txt, flag.txt file name, 123456 shift, 1, 1 options for block 3/4 (need to add this to enc header)
-# And the data from enc header, we also need to undo all instances of the table which will
-# be close to impossible without altering unveil
-
 import math
 
 class decryptor:
@@ -12,7 +5,7 @@ class decryptor:
         self.final = ""
         self.Table = []
         self.input = []
-        self.cipher_Text = ""
+        self.binary_str = ""
         self.final_output = ""
         self.section1 = ""
         self.section2 = ""
@@ -21,161 +14,118 @@ class decryptor:
         self.encryptionHeader = []
         self.final_str = ""
         self.List = []
-        #Encryption header instance variables:
         self.iv = []
         self.hash = ""
-        self.encryptionHeader = ["",] #Full table
-        self.shiftValue = ""  #Caeser
-        self.fileType = "" #txt,doc,img from caller class.
+        self.shiftValue = []  # Changed to list
+        self.fileType = ""  #txt, doc, img from caller class.
+        self.sec3choice = ""
+        self.sec4choice = ""
+        self.padding = ""
+
+    def TakingInput(self, iencHeader):
+        self.input = [item[0] for item in iencHeader]  # Flatten the list of lists to a list of strings 
+        print(f"Received Input: {self.input}") 
+        ls1 = []  # For IV
+        ls2 = []  # For ShiftValue
+        ls3 = []  # For hash
+
+        for row in self.input: 
+            print(f"\nProcessing row: {row}") 
+            # Extract IV (e.g., IV: 12 -> ['1', '2']) 
+            if "IV:" in row: 
+                iv_string = row.split(':')[1].strip()  # Split by ':' 
+                ls1 = int(iv_string)  # Convert to list of digits 
+                self.iv = ls1 
+                print(f"IV: {self.iv}") 
+
+            # Extract Shift Value (e.g., This is the shifting value 123456 -> [1, 2, 3, 4, 5, 6]) 
+            elif "shifting value" in row: 
+                shift_string = row.split(':')[1].strip()  # Split by ':' 
+                ls2 = int(shift_string)  # Convert each digit to an integer 
+                self.shiftValue = ls2 
+                print(f"ShiftValue: {self.shiftValue}") 
+            elif "padding used" in row:
+                pad = row.split(":")[1].strip()
+                self.padding = pad
+                print(f"Padding: {self.padding}")
+
+            # Extract Hash (e.g., This is the hash value: ... -> hash value itself) 
+            elif "hash value" in row: 
+                self.hash = row.split(':')[1].strip()  # Split by ':' 
+                print(f"Hash: {self.hash}") 
+ 
+            # Etract Final Encrypted String (e.g., This is the final encrypted string: ... -> binary string) 
+            elif "final encrypted string" in row: 
+                self.final_str = row.split(':')[1].strip()  # Take the encrypted binary string 
+                print(f"Encrypted binary string: {self.final_str}") 
+
+            elif "block 3 method choice" in row: 
+                self.sec3choice = row.split(':')[1].strip() 
+                print(f"Method 3 choice: {self.sec3choice}") 
+
+            elif "block 4 method choice" in row: 
+                self.sec4choice = row.split(':')[1].strip() 
+                print(f"Method 4 choice: {self.sec4choice}")
+
+            if self.sec3choice is not None and self.sec4choice is not None and self.final_str is not None and self.hash is not None and self.iv is not None:
+                print("Data successfully collected")
+            else:
+                print("Error in encryption header")
         
 
-    #TODO- this function is going to be the most important part, i intend to take the encryption header
-    #As a file or variable, then disect each row using the same order it was entered
-    #Filling the self.variales in the process
-    def TakingInput(self, iencHeader):
-        self.input = iencHeader
-        ls1 = []
-        
-        for row in iencHeader:
-            # Assume row is a list of strings and the first part is where we get 'iv' (initial vector)
-            if isinstance(row[0], str):  # Ensure that the first item is a string
-                for char in row[0]:
-                    if char.isdigit():  # Check if char is a digit (binary data in string form)
-                        ls1.append(int(char))  # Append the integer value of char
-                self.iv = ls1
-                ls1.clear()
-            
-            # Similarly handle the second part (shiftValue)
-            if isinstance(row[1], str):
-                for char in row[1]:
-                    if char.isdigit():
-                        ls1.append(int(char))
-                self.shiftValue = ls1
-                ls1.clear()
-            
-            # Handle other parts as necessary
-            # Similar pattern for row[3] or any other part of input_data
-            if len(row) > 3 and isinstance(row[3], str):
-                for char in row[3]:
-                    if char.isdigit():
-                        ls1.append(int(char))
-                self.input = ls1
-                
-        return iencHeader, input
-    
-    # Function to XOR two binary strings
+
     def xor_binary(self, data, key):
-        # Ensure the key is long enough by repeating it if needed
-        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]
-        # XOR each bit
+        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]  # Ensure key is long enough
         result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
         return result
+#
+# TODO- Need to reverse the str (or work backwards), take the padding off, then split into 128
+# blocks and un XOR them all, then combine them back together then do lots of debugging to see if it worked
 
     def decrypt(self):
-        pass
-        combined_int = self.input
-        # Calculate how many 128-character chunks fit into the total length
-        
+        combined_int = self.final_str  # Assuming final_str holds the encrypted string
         count_128 = math.ceil(len(combined_int) / 128)
         print(f"Number of 128-character chunks: {count_128}")
-        
-        # Initialize a list to store all encrypted blocks
+
         all_encrypted_blocks = []
-        
-        # Loop through the string in steps of 128 characters
         key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
-        
+
         for j in range(count_128):
-            start_index = j * 128  # Calculate start index for each chunk
-            end_index = start_index + 128  # Calculate end index for each chunk
-            bits = combined_int[start_index:end_index]  # Get the 128-character chunk
-            
-            self.List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
-            self.final_str = int(self.List['value'], 2)  # Convert the binary string to an integer
-            
-            # Convert the integer back to binary
+            start_index = j * 128
+            end_index = start_index + 128
+            bits = combined_int[start_index:end_index]
+
+            self.List = {'row': j, 'value': bits}
+            self.final_str = int(self.List['value'], 2)
             self.final_str = bin(self.final_str)[2:]
-            
-            print("table:", self.List)  # Print the dictionary for the current chunk
-            
-            # XOR the binary string with the key
+
+            print("table:", self.List)
+
             s = self.xor_binary(self.final_str, key)
-            
-            # Print the XOR result
             print(f"XOR result for block {j}: {s}")
-            
-            # Append the result to the list of all encrypted blocks
+
             all_encrypted_blocks.append(s)
-        
-        # After processing all blocks, you can join them into a single string or do something else
+
         final_decrypted_string = ''.join(all_encrypted_blocks)
-        #TODO- split this into 4 sections somehow-
-        combined_int = final_decrypted_string
-
-
         print(f"Final decrypted result: {final_decrypted_string}")
-        return final_decrypted_string  # You can return this if needed
-    
-    def perm(self, input):
-        #TODO- reverse every part of this, pass input using encrypt header.
-        pass
-    def create_substitution_box(self):
-            self.substitution_box = {
-                'A': 'D', 'B': 'E', 'C': 'F', 'D': 'G', 'E': 'H',
-                'F': 'I', 'G': 'J', 'H': 'K', 'I': 'L', 'J': 'M',
-                'K': 'N', 'L': 'O', 'M': 'P', 'N': 'Q', 'O': 'R',
-                'P': 'S', 'Q': 'T', 'R': 'U', 'S': 'V', 'T': 'W',
-                'U': 'X', 'V': 'Y', 'W': 'Z', 'X': 'A', 'Y': 'B', 'Z': 'C'
-            }
-    def sub(self,input):
-        pass
 
-    def shift_four(self):
-        self.method_choice4 = 1 #THIS NEEDS ALTERED
-        if self.method_choice4 == "1":
-            self.perm(self.section4)
-        elif self.method_choice4 == "2":
-            self.sub(self.section4)
-        else:
-            print("Data missing shift 4")
-    def shift_three(self):
-        self.method_choice4 = 1 #THIS NEEDS ALTERED
-        if self.method_choice4 == "1":
-            self.perm(self.section3)
-        elif self.method_choice4 == "2":
-            self.sub(self.section3)
-        else:
-            print("Data missing shift 3")
-    def IV(self):
-        pass
-        self.iv
+        # Split into sections
+        sections = self.split_into_sections(final_decrypted_string)
+        print(f"Sections: {sections}")
 
-    def shifty(self):
-        #This function will undo the original shifting
-        pass
+        return final_decrypted_string
 
-
-    def caeserShift(self):
-        pass
-        self.caeserShift
-
-
-    def txt_export(self):
-        pass
-    def img_export(self):
-        pass
-    def docx_export(self):
-        pass
-    
-    #TODO- make a nice display to show off the final output
-    def display(self):
-        pass
-        self.final        
-    
+    def split_into_sections(self, input_string):
+        section_length = len(input_string) // 4
+        sections = [input_string[i:i + section_length] for i in range(0, len(input_string), section_length)]
+        return sections
 
 decryptor_instance = decryptor()
 
-with open("output.txt" , "r") as file:
-    encHead = file.read() 
-s = decryptor_instance.TakingInput(encHead,)
-print(f"\n {(int(s))}") 
+with open("output.txt", "r") as file:
+    encHead = file.read().strip().splitlines()
+
+encHead = [line.split(',') for line in encHead]
+
+s = decryptor_instance.TakingInput(encHead)
+print(f"\nDecryption Output: {s}")
