@@ -6,7 +6,7 @@ import hashlib
 import math
 import importlib.util
 import sys
-
+import random
 class Caller:
     def __init__(self) -> None:
         self.data = ""
@@ -186,7 +186,8 @@ class Algorithm:
         self.encryptionHeader = []
         self.final_str = ""
         self.caesar_instance = caesar_instance  # Store the caesar_instance to access self.shift
-
+        self.sec3choice = ""
+        self.sec4choice = ""
 
     def taking_input(self):
         print("############################################################################################################### \n Hi I'm Will, and I've developed a basic cipher to be used. \n The cipher is passed to this program through a txt file called final output! "
@@ -283,8 +284,10 @@ class Algorithm:
         
         if method_choice == "1":
             self.perm(self.section3)
+            self.sec3choice = 1
         elif method_choice == "2":
             self.sub(self.section3)
+            self.sec3choice = 2
         else:
             print("Invalid choice.")
 
@@ -292,9 +295,10 @@ class Algorithm:
         method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
         if method_choice == "1":
             self.perm(self.section4)
+            self.sec4choice = 1
         elif method_choice == "2":
             self.sub(self.section4)
-        else:
+            self.sec4choice = 2
             print("Invalid choice.")
 
 
@@ -306,41 +310,67 @@ class Algorithm:
         key = key * (len(data) // len(key)) + key[:len(data) % len(key)]
         # XOR each bit
         result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
-        print("THIS IS RESULT TEST: ", result)
         return result
 
 
     def encrypt(self):
-        combined_int = int(f"{self.section1}{self.section2}{self.section3}{self.section4}")
+        key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
         
-        # Convert to binary and remove '0b' prefix
-        str_bits = bin(combined_int)[2:]
+        # Combine the sections into one string (assuming each section is a string of digits)
+        combined_str = f"{self.section1}{self.section2}{self.section3}{self.section4}"
+        
+        # Convert the combined string to binary
+        str_bits = ''.join(format(int(c), '08b') for c in combined_str)
         
         # Calculate how many 128-character chunks fit into the total length
         count_128 = math.ceil(len(str_bits) / 128)
         print(f"Number of 128-character chunks: {count_128}")
         
-        # Loop through the string in steps of 128 characters
-        key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
+        # List to store all blocks
+        all_blocks = []  # This will store all the chunks
         
         for j in range(count_128):
-            start_index = j * 128  # Calculate start index for each chunk
-            end_index = start_index + 128  # Calculate end index for each chunk
-            bits = str_bits[start_index:end_index]  # Get the 128-character chunk
+            # Calculate the start and end index for each 128-bit chunk
+            start_index = j * 128
+            end_index = start_index + 128
             
-            List = {'row': j, 'value': bits}  # Store the chunk in a dictionary with the row number
-            self.final_str = int(List['value'], 2)  # Convert the binary string to an integer
+            # Get the 128-character chunk from str_bits
+            bits = str_bits[start_index:end_index]
             
-            # Convert the integer back to binary
-            self.final_str = bin(self.final_str)[2:]
-            
-            # XOR the binary string with the key
-            s = self.xor_binary(self.final_str, key)
+            # Check if the current chunk is less than 128 bits
+            if len(bits) < 128:
+                # Calculate how much padding is needed
+                padding_length = 128 - len(bits)
+                # Generate the random binary string for padding
+                binary_string = ''.join(random.choice('01') for _ in range(padding_length))
+                
+                # Add the padded chunk to the all_blocks list
+                padded_bits = bits + binary_string
+                all_blocks.append(padded_bits)
+                
+                # Append the padding info to the encryptionHeader
+                self.encryptionHeader.append(f"This is the padding used: {binary_string}")
+                print(f"Padding for this block: {binary_string}")
+            else:
+                # Add the chunk directly if it's already 128 bits
+                all_blocks.append(bits)
+                
+                # XOR the binary string with the key for each block
+                xor_block = self.xor_binary(bits, key)  # XOR the individual block with the key
+                all_blocks[-1] = xor_block  # Replace the last block with the XOR'd version
+                
+                print(f"XOR'd block: {xor_block}")  # Print the XOR'd block for debugging
 
-            print("table:", List)  # Print the dictionary for the current chunk
-            print(f"Final output is: {s}")  # Print the chunk's XOR result
-
-
+        # Join all the binary chunks into one long string
+        joined_bits = ''.join(all_blocks)
+        
+        # Convert the long binary string to an integer
+        self.final_str = int(joined_bits, 2)  # Convert binary string to integer
+        self.final_str = bin(self.final_str)[2:]
+        
+        # Print the final output
+        print(f"\nFinal output as binary: {self.final_str}")
+       
     def hash(self):
         # Make sure final_str is properly assigned as a string
         final_str = str(self.final_str)
@@ -363,9 +393,11 @@ class Algorithm:
         # Append encryption details to encryptionHeader
         #self.encryptionHeader.append(f"This is the caeser cipher used: {str(self.shift)}")
         print("\n")
-        self.encryptionHeader.append(f"This is the shifting value {str(shift_value)}")
+        self.encryptionHeader.append(f"This is the shifting value: {str(shift_value)}")
         self.encryptionHeader.append(f"This is the hash value: {str(hash_256.hex())}")
         self.encryptionHeader.append(f"This is the final encrypted string: {self.final_str}")
+        self.encryptionHeader.append(f"This is the block 3 method choice: {self.sec3choice}")
+        self.encryptionHeader.append(f"This is the block 4 method choice: {self.sec4choice}")
 
         # Write the encryption header to a file
         result = "\n".join(self.encryptionHeader)
