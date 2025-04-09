@@ -21,6 +21,11 @@ class decryptor:
         self.sec3choice = ""
         self.sec4choice = ""
         self.padding = ""
+        self.sec1len = ""
+        self.sec2len = ""
+        self.sec3len = ""
+        self.sec4len = ""
+        self.secTotLen = ""
 
     def TakingInput(self, iencHeader):
         self.input = [item[0] for item in iencHeader]  # Flatten the list of lists to a list of strings 
@@ -66,6 +71,22 @@ class decryptor:
             elif "block 4 method choice" in row: 
                 self.sec4choice = row.split(':')[1].strip() 
                 print(f"Method 4 choice: {self.sec4choice}")
+            #Taking the data to error check the un xor'd blocks
+            elif "Sec1 total" in row:
+                self.sec1len = row.split(':')[1].strip()
+                print(f"section 1 pre xor length: {self.sec1len}")
+            elif "Sec1 total" in row:
+                self.sec2len = row.split(':')[1].strip()
+                print(f"section 2 pre xor length: {self.sec2len}")
+            elif "Sec1 total" in row:
+                self.sec3len = row.split(':')[1].strip()
+                print(f"section 3 pre xor length: {self.sec3len}")
+            elif "Sec1 total" in row:
+                self.sec4len = row.split(':')[1].strip()
+                print(f"Section 4 pre xor length: {self.sec4len}")
+            elif "overall total" in row:
+                self.secTotLen = row.split(':')[1].strip()
+                print(f"Combined total pre xor length: {self.secTotLen}")
 
             if self.sec3choice is not None and self.sec4choice is not None and self.final_str is not None and self.hash is not None and self.iv is not None:
                 print("Data successfully collected")
@@ -74,46 +95,81 @@ class decryptor:
         
 
 
-    def xor_binary(self, data, key):
-        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]  # Ensure key is long enough
+    def xor_binary(self,data, key):
+        # Ensure the key is long enough for the data
+        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]  # Repeat or truncate key
+        # XOR each bit of data with the corresponding bit of the key
         result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
         return result
-#
+
+
 # TODO- Need to reverse the str (or work backwards), take the padding off, then split into 128
 # blocks and un XOR them all, then combine them back together then do lots of debugging to see if it worked
 
     def decrypt(self):
-        combined_int = self.final_str  # Assuming final_str holds the encrypted string
-        count_128 = math.ceil(len(combined_int) / 128)
-        print(f"Number of 128-character chunks: {count_128}")
-
+        # Start with the encrypted string (combined_int)
+        combined_int = self.final_str  
         all_encrypted_blocks = []
+        
+        # The XOR key used for encryption (ensure this is the same as used in encryption)
         key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
+        
+        # Calculate the number of blocks (128-bit)
+        count_128 = math.ceil(len(combined_int) / 128)
 
+        # Loop through each block of 128 bits
         for j in range(count_128):
             start_index = j * 128
             end_index = start_index + 128
+
+            # Extract the current 128-bit block
             bits = combined_int[start_index:end_index]
+            
+            # If padding is specified, remove it from the end of the last block
+            # If padding is specified, remove it from the end of the last block
+            if self.padding and j == count_128 - 1:
+                # Calculate the number of bits to remove based on the padding length
+                discount = len(self.padding) * 8  # Assuming the padding is given in 8-bit groups
+                bits = bits[:-discount]  # Remove the padding bits
 
-            self.List = {'row': j, 'value': bits}
-            self.final_str = int(self.List['value'], 2)
-            self.final_str = bin(self.final_str)[2:]
-
-            print("table:", self.List)
-
-            s = self.xor_binary(self.final_str, key)
+            
+            # Apply XOR to decrypt this block (reversing the encryption step)
+            s = self.xor_binary(bits, key)
             print(f"XOR result for block {j}: {s}")
 
+            # Append the decrypted block to the list
             all_encrypted_blocks.append(s)
 
-        final_decrypted_string = ''.join(all_encrypted_blocks)
-        print(f"Final decrypted result: {final_decrypted_string}")
+        # Combine the decrypted blocks into one final binary string
+        final_decrypted_str = ''.join(all_encrypted_blocks)
+        
 
-        # Split into sections
-        sections = self.split_into_sections(final_decrypted_string)
-        print(f"Sections: {sections}")
+        # Convert the binary string back to the original format (e.g., ASCII, file data)
+        # Depending on your encryption method, this step may involve converting back to text, or handling file types.
+        self.final_output = self.binary_to_original(final_decrypted_str)
+        print(f"finale {self.final_output}")
+        s = len(self.final_output)
+        print(s,self.secTotLen)
+        return self.final_output
 
-        return final_decrypted_string
+    def binary_to_original(self, binary_str):
+        try:
+            # Try to decode the binary string into ASCII text
+            chars = [binary_str[i:i+8] for i in range(0, len(binary_str), 8)]  # Split binary into 8-bit chunks
+            original_str = ''.join(chr(int(c, 2)) for c in chars)  # Convert each 8-bit chunk to a character
+            
+            # Check if the result is printable (i.e., text)
+            if all(32 <= ord(c) <= 126 or c in '\n\r\t' for c in original_str):
+                return original_str
+            else:
+                # If it's not printable text, it's likely binary data (e.g., file or image)
+                # You can return the binary string directly, or save it to a file.
+                return binary_str  # Return as raw binary string
+        except Exception as e:
+            print(f"Error during binary to original conversion: {e}")
+            return binary_str  # Return raw binary in case of an error
+
+
 
     def split_into_sections(self, input_string):
         section_length = len(input_string) // 4
@@ -129,3 +185,4 @@ encHead = [line.split(',') for line in encHead]
 
 s = decryptor_instance.TakingInput(encHead)
 print(f"\nDecryption Output: {s}")
+decryptor_instance.decrypt()
