@@ -247,7 +247,9 @@ class Algorithm:
 
     def shift_one(self):
         shifted_section1 = int(self.section1, 16)
-        self.section1 = shifted_section1 * self.IV
+        # Convert self.IV to an integer before multiplication
+        self.section1 = shifted_section1 * int(self.IV)  # Convert self.IV to an integer
+
         print(f"Block 1 final shift:", self.section1)
 
     def shift_two(self):
