@@ -99,21 +99,14 @@ class Caesar:
 
     def take_shift(self):
         while True:
-            try:
-                shift = input("\nEnter 6 digits you'd like to shift the string with: ")
-                
-                # Check if the input is a number and is exactly 6 digits long
-                if shift.isdigit() and len(shift) == 6:
-                    self.shift = int(shift)  # Convert the shift to an integer
-                    print(f"You entered: {shift}")
-                    self.encryptionHeader.append(self.shift)
-                    return self.encryptionHeader
-                    
-                else:
-                    print("Incorrect entry: please enter 6 digits for the shift.")
-            except ValueError as e:
-                print("An error occurred:", e)
-
+                for i in range(6):
+                    shift = random.randint(1,9)
+               
+                self.shift = int(shift)  # Convert the shift to an integer
+                print(f"You entered: {shift}")
+                self.encryptionHeader.append(self.shift)
+                return self.encryptionHeader
+           
     def caeser(self):
         # Apply the Caesar cipher shift to each digit in the binary string
         if not self.caller_data or self.shift is None:
@@ -213,18 +206,22 @@ class Algorithm:
         print(f"Initial Block 4: {self.section4}")
 
     def IV(self):
-        while True:
-            try:
-                self.IV = input("Please enter a two-digit number to initialize the algorithm: ")
-                if self.IV.isdigit() and len(self.IV) == 2:
-                    self.IV = int(self.IV)
-                    print(f"\nOur IV factor is: {self.IV}")
-                    self.encryptionHeader.append(f"IV: {self.IV}")
-                    break
-                else:
-                    print("Error, enter a two-digit number")
-            except ValueError as e:
-                print("An error occurred:", e)
+        # Generate two random digits
+        iv_part1 = random.randint(1, 9)  # First random digit
+        iv_part2 = random.randint(1, 9)  # Second random digit
+
+        # Combine the two parts to form a two-digit IV
+        self.IV = f"{iv_part1}{iv_part2}"  # Combine as string
+
+        # Check if IV has two digits
+        if len(self.IV) == 2:
+            print(f"\nOur IV factor is: {self.IV}")
+            self.encryptionHeader.append(f"IV: {self.IV}")
+        else:
+            print("Error: IV does not have two digits")
+            
+
+        
 
     def create_substitution_box(self):
         self.substitution_box = {
@@ -280,7 +277,7 @@ class Algorithm:
         print(f"Final result: {final}")
 
     def shift_three(self):
-        method_choice = input("Choose a method for shift_three: (1) perm (2) sub: ")
+        method_choice = str(random.randint(1,2))
         
         if method_choice == "1":
             self.perm(self.section3)
@@ -292,13 +289,14 @@ class Algorithm:
             print("Invalid choice.")
 
     def shift_four(self):
-        method_choice = input("Choose a method for shift_four: (1) perm (2) sub: ")
+        method_choice = str(random.randint(1,2))
         if method_choice == "1":
             self.perm(self.section4)
             self.sec4choice = 1
         elif method_choice == "2":
             self.sub(self.section4)
             self.sec4choice = 2
+        else:
             print("Invalid choice.")
 
 
@@ -306,11 +304,12 @@ class Algorithm:
 
     # Function to XOR two binary strings
     def xor_binary(self,data, key):
-        # Ensure the key is long enough by repeating it if needed
-        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]
-        # XOR each bit
+        # Ensure the key is long enough for the data
+        key = key * (len(data) // len(key)) + key[:len(data) % len(key)]  # Repeat or truncate key
+        # XOR each bit of data with the corresponding bit of the key
         result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
         return result
+
 
 
     def encrypt(self):
@@ -318,14 +317,26 @@ class Algorithm:
         
         # Combine the sections into one string (assuming each section is a string of digits)
         combined_str = f"{self.section1}{self.section2}{self.section3}{self.section4}"
+
+        sec11 = str(len(str(self.section1)))
+        sec22 = str(len(str(self.section2)))
+        sec33 = str(len(str(self.section3)))
+        sec44 = str(len(str(self.section4)))
+        self.encryptionHeader.append(f"Sec1 total: {sec11}")
+        self.encryptionHeader.append(f"Sec2 total: {sec22}")
+        self.encryptionHeader.append(f"Sec3 total: {sec33}")
+        self.encryptionHeader.append(f"Sec4 total: {sec44}")
         
+       
         # Convert the combined string to binary
         str_bits = ''.join(format(int(c), '08b') for c in combined_str)
-        
+        print(f"test: {str_bits}")
         # Calculate how many 128-character chunks fit into the total length
         count_128 = math.ceil(len(str_bits) / 128)
         print(f"Number of 128-character chunks: {count_128}")
-        
+
+        sec55 = str(len(str_bits))
+        self.encryptionHeader.append(f"overall total: {sec55}")
         # List to store all blocks
         all_blocks = []  # This will store all the chunks
         
@@ -358,7 +369,6 @@ class Algorithm:
                 # XOR the binary string with the key for each block
                 xor_block = self.xor_binary(bits, key)  # XOR the individual block with the key
                 all_blocks[-1] = xor_block  # Replace the last block with the XOR'd version
-                
                 print(f"XOR'd block: {xor_block}")  # Print the XOR'd block for debugging
 
         # Join all the binary chunks into one long string
@@ -398,7 +408,7 @@ class Algorithm:
         self.encryptionHeader.append(f"This is the final encrypted string: {self.final_str}")
         self.encryptionHeader.append(f"This is the block 3 method choice: {self.sec3choice}")
         self.encryptionHeader.append(f"This is the block 4 method choice: {self.sec4choice}")
-
+        print("here",self.encryptionHeader)
         # Write the encryption header to a file
         result = "\n".join(self.encryptionHeader)
         with open("output.txt", "w") as file:
@@ -414,8 +424,6 @@ class Algorithm:
 
 
 shifted_binary = caesar.caeser()  # Apply the Caesar cipher shift
-
-# After this, the shift value should be correctly set in the Caesar instance.
 
 # Now proceed with the Algorithm class, ensuring it's properly passed the Caesar instance
 EncryptionH_instance = caesar  # Use the caesar instance after setting the shift
