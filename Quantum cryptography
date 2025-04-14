@@ -1,0 +1,71 @@
+Quantum cryptography is a cutting-edge field that leverages the principles of quantum mechanics to secure communication systems in ways that traditional cryptography cannot. The key idea behind quantum cryptography is to use the inherent properties of quantum bits (qubits) and the unique features of quantum physics to create secure communication channels that are highly resistant to eavesdropping or interception.
+
+Here's a breakdown of what it consists of:
+
+1. Quantum Key Distribution (QKD)
+This is the core concept in quantum cryptography. QKD allows two parties to exchange a cryptographic key securely over a potentially insecure channel. The most widely known protocol for QKD is BB84 (proposed by Charles Bennett and Gilles Brassard in 1984).
+
+Quantum Superposition: Qubits can exist in a superposition of states (both 0 and 1 at the same time). When measuring a qubit, its state collapses into one of the two possible outcomes. This means that an eavesdropper can't measure the qubits without disturbing their state and alerting the legitimate parties.
+
+Quantum Entanglement: When two qubits are entangled, the state of one qubit is linked to the state of the other, no matter how far apart they are. This property is used to help detect eavesdropping during the key exchange process. Any interference with the transmission of qubits changes their state in a detectable way.
+
+2. Heisenberg Uncertainty Principle
+One of the key features of quantum mechanics is the Heisenberg Uncertainty Principle, which states that certain pairs of properties (like position and momentum) cannot be simultaneously measured with perfect precision. In the context of quantum cryptography, this principle is used to ensure security. If someone tries to measure the quantum state of a qubit during transmission (to intercept the key), the act of measuring will disturb the qubit's state, making eavesdropping detectable.
+
+3. No-Cloning Theorem
+Another key principle in quantum cryptography is the no-cloning theorem, which states that it is impossible to create an exact copy of an unknown quantum state. This is important because it prevents an eavesdropper from copying quantum information without altering it, making quantum cryptography inherently more secure than classical methods.
+
+4. Quantum-Resistant Algorithms
+Quantum cryptography can also be seen as part of the broader field of post-quantum cryptography, which aims to develop cryptographic systems that are resistant to attacks from quantum computers. Quantum computers have the potential to break many of the cryptographic systems that we currently rely on, such as RSA and ECC (Elliptic Curve Cryptography), by efficiently solving problems like integer factorization and discrete logarithms. Quantum cryptography aims to safeguard against this by creating cryptographic systems that rely on quantum mechanics, which can’t be easily broken by quantum computers.
+
+Key Protocols:
+BB84: The first quantum cryptographic protocol, using qubit polarization to securely exchange cryptographic keys.
+
+E91: A protocol based on quantum entanglement and Bell’s theorem, which uses the correlations between entangled particles to securely distribute keys.
+
+Decoy State Protocol: An enhancement of QKD that deals with the issue of photon loss and reduces the chance of eavesdropping.
+
+Applications of Quantum Cryptography:
+Secure Communication: QKD can enable completely secure communication channels, where even if an attacker intercepts the communication, the eavesdropping will be detected, and the key exchange will be aborted.
+
+Quantum Internet: Quantum cryptography could be a building block for a future "quantum internet," enabling highly secure communication across vast distances with ultra-low risk of interception.
+
+Digital Signatures and Authentication: Quantum cryptographic methods can also be used for creating digital signatures that are secure even against quantum attacks.
+
+Limitations:
+Practicality: While quantum cryptography offers high levels of security, implementing it in practice is still a challenge. Quantum communication channels require highly controlled environments (e.g., low temperatures and noise-free conditions) and advanced technologies like photon detectors and quantum repeaters.
+
+Distance: QKD systems have limited transmission distances (currently up to about 100–200 km with fiber optics). Beyond that, the quantum signals weaken due to losses in the fiber or atmosphere, although advances in quantum repeaters and satellite-based communication are aiming to overcome this limitation.
+
+Cost: Setting up quantum cryptographic systems can be expensive due to the need for specialized equipment, such as lasers and photon detectors.
+
+Future of Quantum Cryptography:
+As quantum computers evolve, the importance of quantum cryptography grows. Some researchers are working toward integrating quantum cryptographic protocols into existing communication infrastructures, while others are exploring how to make QKD systems more scalable and efficient for everyday use.
+
+In summary, quantum cryptography is a revolutionary approach that uses the principles of quantum mechanics to ensure secure communication, with quantum key distribution (QKD) as the foundation. Its strength lies in the fact that it allows parties to detect any unauthorized interference or eavesdropping, making it one of the most secure methods available for communication today.
+
+
+
+You said:
+so no cloning theorem means measuring 0101010 would make it randomise to potentially 1011010 for example?
+
+ChatGPT said:
+Yes, exactly! The no-cloning theorem is closely related to the idea that measuring a quantum state disturbs it in an unpredictable way, especially if the state is unknown. Let me break it down for you with a bit more clarity:
+
+When you're working with quantum bits (qubits), they don’t just exist as 0 or 1 like classical bits; they can exist in a superposition of both states at once. So a qubit could be in a state that’s something like a mix between 0 and 1, rather than a definite 0 or 1.
+
+Now, here’s where the no-cloning theorem comes into play: If you try to "clone" a quantum state (i.e., make an exact copy of it), you can’t do that. Unlike classical bits, where you can freely copy a 0 or a 1 without changing anything, quantum information is fundamentally un-copyable. Any attempt to clone or measure the state disturbs it. This is due to the fact that when you measure a quantum state, you collapse it into one of its definite outcomes (0 or 1), losing the superposition.
+
+So, in the example you gave:
+If you have a quantum bit string like 0101010, which could represent a superposition of quantum states, trying to "measure" or copy that state in an attempt to intercept the information would collapse each individual qubit into a definite state (either 0 or 1). Here's what would happen:
+
+When you measure a qubit in a superposition, you don’t get a predictable result—you get one of the possibilities, but you can’t predict which one. So a qubit in a superposition like (0 + 1) could collapse into 0 or 1 when measured, with a certain probability for each.
+
+If you attempt to measure multiple qubits (say, all the bits in your string), you don’t get the exact same state that was originally there (like 0101010). Instead, you get some random combination of 0s and 1s, like 1011010, which is a disturbed version of the original string.
+
+This disturbance is critical in quantum cryptography because it acts as a signal to the legitimate parties that eavesdropping has occurred. If someone tries to intercept and measure the quantum bits while they’re being transmitted, the interference will be noticeable. It will "randomize" the bits, and thus, the sender and receiver can detect that something went wrong.
+
+Example in Quantum Key Distribution (QKD):
+Let’s say you’re using BB84 (a famous QKD protocol). The sender (Alice) sends qubits in certain quantum states, and the receiver (Bob) measures them. If anyone tries to intercept the qubits (say, Eve), their measurement will disturb the qubits, causing an error. When Alice and Bob compare their results, they’ll see mismatches, which will indicate that the transmission was compromised, and they can discard the key.
+
+So yes, trying to measure or clone the quantum state would not give you an exact copy of the original sequence—if you try to measure 0101010, you'll end up with a different, randomized string like 1011010, depending on how the superposition collapses.
