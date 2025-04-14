@@ -1,0 +1,5 @@
+Here I will develop a range of different honey/ baiting techniques, and adminstor them in a fashion where I can be alerted when an attacker opens them!
+I will make a honey file/ pot/ token etc to understand it all in a hands on fashion.
+May need to develop a script to gather alerts to a SIEM for example.
+
+(Now may be a good time to develop a home lab containing- SIEM(Splunk or elastic if i want it personalised) and EDR (velociraptor) and open source NGFW, covering IDS/IPS and DPI)
