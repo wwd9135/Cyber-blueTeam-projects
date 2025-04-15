@@ -1,3 +1,5 @@
+import hashlib
+import random
 import math
 
 class decryptor:
@@ -17,7 +19,7 @@ class decryptor:
         self.iv = []
         self.hash = ""
         self.shiftValue = []  # Changed to list
-        self.fileType = ""  #txt, doc, img from caller class.
+        self.fileType = ""  # txt, doc, img from caller class.
         self.sec3choice = ""
         self.sec4choice = ""
         self.padding = ""
@@ -28,27 +30,27 @@ class decryptor:
         self.secTotLen = ""
 
     def TakingInput(self, iencHeader):
-        self.input = [item[0] for item in iencHeader]  # Flatten the list of lists to a list of strings 
+        self.input = [item[0] for item in iencHeader]  # Flatten the list of lists to a list of strings
         print(f"Received Input: {self.input}") 
         ls1 = []  # For IV
         ls2 = []  # For ShiftValue
         ls3 = []  # For hash
 
-        for row in self.input: 
-            print(f"\nProcessing row: {row}") 
+        for row in self.input:
+            print(f"\nProcessing row: {row}")
             # Extract IV (e.g., IV: 12 -> ['1', '2']) 
             if "IV:" in row: 
                 iv_string = row.split(':')[1].strip()  # Split by ':' 
-                ls1 = int(iv_string)  # Convert to list of digits 
+                ls1 = int(iv_string)  # Convert to a list of digits 
                 self.iv = ls1 
-                print(f"IV: {self.iv}") 
+                print(f"IV: {self.iv}")
 
             # Extract Shift Value (e.g., This is the shifting value 123456 -> [1, 2, 3, 4, 5, 6]) 
             elif "shifting value" in row: 
                 shift_string = row.split(':')[1].strip()  # Split by ':' 
                 ls2 = int(shift_string)  # Convert each digit to an integer 
                 self.shiftValue = ls2 
-                print(f"ShiftValue: {self.shiftValue}") 
+                print(f"ShiftValue: {self.shiftValue}")
             elif "padding used" in row:
                 pad = row.split(":")[1].strip()
                 self.padding = pad
@@ -57,132 +59,139 @@ class decryptor:
             # Extract Hash (e.g., This is the hash value: ... -> hash value itself) 
             elif "hash value" in row: 
                 self.hash = row.split(':')[1].strip()  # Split by ':' 
-                print(f"Hash: {self.hash}") 
- 
-            # Etract Final Encrypted String (e.g., This is the final encrypted string: ... -> binary string) 
+                print(f"Hash: {self.hash}")
+
+            # Extract Final Encrypted String (e.g., This is the final encrypted string: ... -> binary string)
             elif "final encrypted string" in row: 
                 self.final_str = row.split(':')[1].strip()  # Take the encrypted binary string 
-                print(f"Encrypted binary string: {self.final_str}") 
+                print(f"Encrypted binary string: {self.final_str}")
 
             elif "block 3 method choice" in row: 
                 self.sec3choice = row.split(':')[1].strip() 
-                print(f"Method 3 choice: {self.sec3choice}") 
+                print(f"Method 3 choice: {self.sec3choice}")
 
             elif "block 4 method choice" in row: 
                 self.sec4choice = row.split(':')[1].strip() 
                 print(f"Method 4 choice: {self.sec4choice}")
-            #Taking the data to error check the un xor'd blocks
+
+            # Taking the data to error check the un XOR'd blocks
             elif "Sec1 total" in row:
                 self.sec1len = row.split(':')[1].strip()
-                print(f"section 1 pre xor length: {self.sec1len}")
-            elif "Sec1 total" in row:
+                print(f"Section 1 pre XOR length: {self.sec1len}")
+            elif "Sec2 total" in row:
                 self.sec2len = row.split(':')[1].strip()
-                print(f"section 2 pre xor length: {self.sec2len}")
-            elif "Sec1 total" in row:
+                print(f"Section 2 pre XOR length: {self.sec2len}")
+            elif "Sec3 total" in row:
                 self.sec3len = row.split(':')[1].strip()
-                print(f"section 3 pre xor length: {self.sec3len}")
-            elif "Sec1 total" in row:
+                print(f"Section 3 pre XOR length: {self.sec3len}")
+            elif "Sec4 total" in row:
                 self.sec4len = row.split(':')[1].strip()
-                print(f"Section 4 pre xor length: {self.sec4len}")
+                print(f"Section 4 pre XOR length: {self.sec4len}")
             elif "overall total" in row:
                 self.secTotLen = row.split(':')[1].strip()
-                print(f"Combined total pre xor length: {self.secTotLen}")
+                print(f"Combined total pre XOR length: {self.secTotLen}")
 
-            if self.sec3choice is not None and self.sec4choice is not None and self.final_str is not None and self.hash is not None and self.iv is not None:
+            # Check if all critical data is collected
+            if self.sec3choice and self.sec4choice and self.final_str and self.hash and self.iv:
                 print("Data successfully collected")
             else:
                 print("Error in encryption header")
-        
 
-
-    def xor_binary(self,data, key):
-        # Ensure the key is long enough for the data
+    def xor_binary(self, data, key):
+        """ Reversing the XOR operation by XORing again with the same key """
         key = key * (len(data) // len(key)) + key[:len(data) % len(key)]  # Repeat or truncate key
         # XOR each bit of data with the corresponding bit of the key
         result = ''.join(str(int(d) ^ int(k)) for d, k in zip(data, key))
         return result
 
+    def reverse_caesar_shift(self, data, shift):
+        """ Apply reverse Caesar cipher shift (shift by -value) """
+        shifted_binary = [(int(binary) - shift) % 2 for binary in data]  # Reverse the shift
+        
+        # Convert the list of shifted binary digits back to a string
+        shifted_binary_str = ''.join(str(binary) for binary in shifted_binary)
+        return shifted_binary_str
 
-# TODO- Need to reverse the str (or work backwards), take the padding off, then split into 128
-# blocks and un XOR them all, then combine them back together then do lots of debugging to see if it worked
+    def reverse_substitution(self, input):
+        """ Reverse the substitution using a reverse substitution box """
+        reverse_substitution_box = {
+            'A': 'X', 'B': 'Y', 'C': 'Z', 'D': 'A', 'E': 'B', 
+            'F': 'C', 'G': 'D', 'H': 'E', 'I': 'F', 'J': 'G',
+            'K': 'H', 'L': 'I', 'M': 'J', 'N': 'K', 'O': 'L', 
+            'P': 'M', 'Q': 'N', 'R': 'O', 'S': 'P', 'T': 'Q',
+            'U': 'R', 'V': 'S', 'W': 'T', 'X': 'U', 'Y': 'V',
+            'Z': 'W'
+        }
+        
+        substituted_string = ""
+        for char in input:
+            if char in reverse_substitution_box:
+                substituted_string += reverse_substitution_box[char]
+            else:
+                substituted_string += char
+        return substituted_string
+
+    def reverse_permutation(self, input):
+        """ Reverse the permutation step applied to the data """
+        input_str = str(input)
+        section_length = len(input_str) // 4
+        remainder = len(input_str) % 4
+
+        section1 = input_str[:section_length + (1 if remainder > 0 else 0)]
+        section2 = input_str[section_length + (1 if remainder > 0 else 0):section_length * 2 + (1 if remainder > 1 else 0)]
+        section3 = input_str[section_length * 2 + (1 if remainder > 1 else 0):section_length * 3 + (1 if remainder > 2 else 0)]
+        section4 = input_str[section_length * 3 + (1 if remainder > 2 else 0):]
+
+        combo = [section1, section2, section3, section4]
+        perm_scheme = [1, 4, 2, 3]  # Reverse the permutation scheme (as given)
+        permuted_blocks = [None] * len(combo)
+
+        for i, new_position in enumerate(perm_scheme):
+            permuted_blocks[i] = combo[new_position - 1]
+        
+        final = ''.join(permuted_blocks)
+        return final
 
     def decrypt(self):
-        # Start with the encrypted string (combined_int)
-        combined_int = self.final_str  
-        all_encrypted_blocks = []
+        # Step 1: Reverse XOR operation using the encrypted data and key
+        xor_key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"  # Replace with actual XOR key
+        xor_decrypted_data = self.xor_binary(self.final_str, xor_key)
+
+        print(f"After XOR decryption: {xor_decrypted_data}")
+
+        # Step 2: Reverse the Caesar shift (shift by -9)
+        caesar_decrypted_data = self.reverse_caesar_shift(xor_decrypted_data, self.shiftValue)
+
+        print(f"After Caesar shift reversal: {caesar_decrypted_data}")
+
+        # Step 3: Reverse the substitution (if applied)
+        substituted_data = self.reverse_substitution(caesar_decrypted_data)
+        print(f"After substitution reversal: {substituted_data}")
+
+        # Step 4: Reverse the permutation
+        permuted_data = self.reverse_permutation(substituted_data)
+        print(f"After permutation reversal: {permuted_data}")
         
-        # The XOR key used for encryption (ensure this is the same as used in encryption)
-        key = "01000000100010100000111111010000000010100000100101001101110110110111001100010110001001000101000011100011110001101111000001111001"
+        return permuted_data
+
+    def validate_decryption(self, decrypted_data):
+        """ Validate the decrypted data by comparing hashes """
+        hash_in_header = self.hash  # Replace with the hash from the header (e.g., "59c9a96ad3b1aeccc181183491c9920ef69cc8f3d98ac60fd8755ace65da7f0e")
         
-        # Calculate the number of blocks (128-bit)
-        count_128 = math.ceil(len(combined_int) / 128)
-
-        # Loop through each block of 128 bits
-        for j in range(count_128):
-            start_index = j * 128
-            end_index = start_index + 128
-
-            # Extract the current 128-bit block
-            bits = combined_int[start_index:end_index]
-            
-            # If padding is specified, remove it from the end of the last block
-            # If padding is specified, remove it from the end of the last block
-            if self.padding and j == count_128 - 1:
-                # Calculate the number of bits to remove based on the padding length
-                discount = len(self.padding) * 8  # Assuming the padding is given in 8-bit groups
-                bits = bits[:-discount]  # Remove the padding bits
-
-            
-            # Apply XOR to decrypt this block (reversing the encryption step)
-            s = self.xor_binary(bits, key)
-            print(f"XOR result for block {j}: {s}")
-
-            # Append the decrypted block to the list
-            all_encrypted_blocks.append(s)
-
-        # Combine the decrypted blocks into one final binary string
-        final_decrypted_str = ''.join(all_encrypted_blocks)
+        sha256 = hashlib.sha256()
+        sha256.update(decrypted_data.encode('utf-8'))
+        hash_256 = sha256.hexdigest()
         
-
-        # Convert the binary string back to the original format (e.g., ASCII, file data)
-        # Depending on your encryption method, this step may involve converting back to text, or handling file types.
-        self.final_output = self.binary_to_original(final_decrypted_str)
-        print(f"finale {self.final_output}")
-        s = len(self.final_output)
-        print(s,self.secTotLen)
-        return self.final_output
-
-    def binary_to_original(self, binary_str):
-        try:
-            # Try to decode the binary string into ASCII text
-            chars = [binary_str[i:i+8] for i in range(0, len(binary_str), 8)]  # Split binary into 8-bit chunks
-            original_str = ''.join(chr(int(c, 2)) for c in chars)  # Convert each 8-bit chunk to a character
-            
-            # Check if the result is printable (i.e., text)
-            if all(32 <= ord(c) <= 126 or c in '\n\r\t' for c in original_str):
-                return original_str
-            else:
-                # If it's not printable text, it's likely binary data (e.g., file or image)
-                # You can return the binary string directly, or save it to a file.
-                return binary_str  # Return as raw binary string
-        except Exception as e:
-            print(f"Error during binary to original conversion: {e}")
-            return binary_str  # Return raw binary in case of an error
-
-
-
-    def split_into_sections(self, input_string):
-        section_length = len(input_string) // 4
-        sections = [input_string[i:i + section_length] for i in range(0, len(input_string), section_length)]
-        return sections
-
-decryptor_instance = decryptor()
-
+        if hash_in_header == hash_256:
+            print("Decryption successful! The hashes match.")
+        else:
+            print(f"Decryption failed. Expected hash: {hash_in_header}, but got: {hash_256}")
 with open("output.txt", "r") as file:
     encHead = file.read().strip().splitlines()
 
 encHead = [line.split(',') for line in encHead]
 
-s = decryptor_instance.TakingInput(encHead)
-print(f"\nDecryption Output: {s}")
-decryptor_instance.decrypt()
+decryptor_instance = decryptor()
+decryptor_instance.TakingInput(encHead)
+decrypted_data = decryptor_instance.decrypt()
+decryptor_instance.validate_decryption(decrypted_data)
