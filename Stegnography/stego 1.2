@@ -33,48 +33,74 @@ class inputs:
         self.data = ''.join(format(ord(c), '08b') for c in self.files)
         self.fit = len(self.data) // 3
         self.leftover = len(self.data) % 3
+       
         print(f"[inputs.dataStuct] Fit (triplets): {self.fit}")
         print(f"[inputs.dataStuct] Leftover characters: {self.leftover}\n \n")
-       # print(f"[inputs.txt] Filtered characters (without spaces):\n{filed}")
-       # print(f"[inputs.txt] Binary representation ({len(self.data)} bits):\n{self.data}")
+        print(f"[inputs.txt] Filtered characters (without spaces):\n{filed}")
+        print(f"[inputs.txt] Binary representation ({len(self.data)} bits):\n{self.data}")
 
-    def dataStuctAddition(self,a,b,c): 
-        #Data passed must be done in iterations, this
-        red = a
-        green = b
-        blue = c
-        new_row = {'R': red, 'G': green, 'B': blue}
-        self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
-        #TODO- set up functionality to change the data to binary as we work with it. 
-        return self.df
+        
+
+
+    def dataStuctAddition(self, a , b = None , c = None): 
+        
+        if b is None:
+            new_row = {'R': a}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+
+        elif c is None:
+            new_row = {'R': a, 'G': b}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+        
+        else:
+            new_row = {'R': a, 'G': b, 'B': c}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+
+        # Go through, append i to the last elemet of each j. use [ 0::] or whatever it was
+    
+
+
+
 
     def image(self):
         self.img = Image.open("sd.webp")
         print(f"Size of image is: {self.img.size}")
         print(f"Image mode is: {self.img.mode}")
         self.pixels = self.img.load()
-        print(self.pixels[0,0])
-        
-        #TODO- get the pixel output here so i can strip it to just one or two parts for the leftovers.
-        #Send the pixel data to the datastruct function so it can develop a table using the data,
         for i in range(self.fit):
-            self.current = self.pixels[a,b]
+            
+            x = i + 1
+            y = i + 1
+            self.current = self.pixels[x,y]
             a = self.current[0]
             b = self.current[1]
             c = self.current[2] 
-            self.dataStuctAddition(a,b,c)
+            #Data passed must be done in iterations, this
+            red = format(a , '08b')
+            green = format(b, '08b') if b is not None else None 
+            blue = format(c, '08b') if c is not None else None
+
+            self.dataStuctAddition(red,green,blue)
 
         #If left over data is less than a full pixel, add one or two colour channels worth of data to end of output.
         if self.leftover == 1:
-            self.dataStuctAddition(a)
+            self.dataStuctAddition(red)
         elif self.leftover == 2:
-            self.dataStuctAddition(a,b)
+            self.dataStuctAddition(red,green)
         
         self.img.save("output.png")
         
+        print( self.df )
         
-
-
+    def changer(self):
+        for i in range(len(self.data)):#
+            for index, row in self.df.iterrows():
+                self.data[i].append(row['R'][::0])
+                self.data[i+1].append(row['G'][::0])
+                self.data[i+2].append(row['B'][::0])
+                i + 3                
+    
+        
 
 # ------------------ Caesar Cipher Class ------------------
 class Caesar:
@@ -123,7 +149,7 @@ caller_instance = inputs()
 raw_text = caller_instance.txt_import()
 
 caller_instance.txt(raw_text)
-caller_instance.dataStuctAddition()
+
 
 caesar = Caesar(caller_instance)
 caesar.errorCheck()
@@ -138,3 +164,5 @@ if shifted_binary:
    #     print(f"\n[Main] Encrypted data written to 'dis.txt'.")
 else:
     print("No shifted binary data available to write.")
+
+    
