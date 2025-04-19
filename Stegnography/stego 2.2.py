@@ -37,6 +37,10 @@ class inputs:
         print(f"[inputs.txt] Filtered characters (without spaces):\n{filed}")
         print(f"[inputs.txt] Binary representation ({len(self.data)} bits):\n{self.data}")
     def update_image_from_df(self):
+        if self.df.empty:
+            print("DataFrame is empty. No image update performed.")
+            return
+
         self.img = Image.open("sd.webp")
         self.pixels = self.img.load()
 
@@ -44,17 +48,19 @@ class inputs:
             x = i + 1
             y = i + 1
             row = self.df.loc[i]
-            print(f"Testing row: {row}")
 
-            r = int(row['R'], 2) if pd.notna(row['R']) else 0
-            g = int(row['G'], 2) if pd.notna(row['G']) else 0
-            b = int(row['B'], 2) if pd.notna(row['B']) else 0
-            #print()
+            # Always get R, since it's guaranteed to exist
+            r = int(row['R'], 2)
+
+            # Handle G and B safely — only convert if valid
+            g = int(row['G'], 2) if pd.notna(row.get('G')) and isinstance(row.get('G'), str) else self.pixels[x, y][1]
+            b = int(row['B'], 2) if pd.notna(row.get('B')) and isinstance(row.get('B'), str) else self.pixels[x, y][2]
 
             self.pixels[x, y] = (r, g, b)
-            print(f"Testing pixels: {self.pixels}")
+
         self.img.save("output.png")
         print("[update_image_from_df] Image updated and saved as output.png")
+
 
     def dataStuctAddition(self, a, b=None, c=None):
         """ This function appends bits to the last binary string of each column in the DataFrame """
