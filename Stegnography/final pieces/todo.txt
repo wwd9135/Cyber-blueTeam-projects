@@ -1,0 +1,3 @@
+I will need to add perfect error handling.
+Then develop a GUI
+And a better system for encryption etc, needs to have stronger encryption and some key or better way to move the data around.
