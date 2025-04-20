@@ -7,7 +7,6 @@ class inputs:
     def __init__(self):
         self.Txtinput = ""
         self.data = ""
-        self.files = []
         self.fit = 0
         self.leftover = 0
         self.pixels = ""
@@ -23,7 +22,8 @@ class inputs:
             print("Error: The file was not found.")
         except Exception as e:
             print(f"An error occurred: {e}")
-
+    def returner(self):
+        return self.fit, self.leftover,self.data
     def txt(self, text):
         # Remove only spaces (leave \n etc. if needed)
         filed = [char for char in text if char != ' ']
@@ -133,10 +133,97 @@ class inputs:
         self.img.save("output.png")
         print(self.df)
 
+
+# ------------------ Decryptor ------------------
+class extraction:
+    def __init__(self,fit,leftover,data):
+        self.fit = fit
+        self.leftover = leftover
+        self.data = data
+       
+        self.img =  Image.open("output.png")
+        self.pixels = self.img.load()
+        self.df = pd.DataFrame(columns=['R', 'G', 'B'])
+       
+    def dataStuctAddition(self, a, b=None, c=None):
+        # Initialize DataFrame with empty rows if it's empty
+        if self.df.empty:
+            self.df = pd.DataFrame(columns=['R', 'G', 'B'])
+            # Initialize columns with empty strings to ensure type consistency
+            self.df['R'] = self.df['R'].astype(str)
+            self.df['G'] = self.df['G'].astype(str)
+            self.df['B'] = self.df['B'].astype(str)
+
+        # If it's the first entry, create a new row for R, G, B
+        if b is None:
+            new_row = {'R': a}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+        elif c is None:
+            new_row = {'R': a, 'G': b}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+        else:
+            new_row = {'R': a, 'G': b, 'B': c}
+            self.df = pd.concat([self.df, pd.DataFrame([new_row])], ignore_index=True)
+
+    def extract(self):
+        bit_index = 0  # Index for data bits
+        store = [ ]
+        print(f"Self.data: {self.data}")
+        for i in range(len(self.df)):
+            for channel in ['R', 'G', 'B']:
+                if bit_index < len(self.data):
+                    original_binary = self.df.at[i, channel]
+                    if len(original_binary) == 8:  # Only modify if it's a full 8-bit string
+                       
+                        store.append(original_binary[-1])
+
+
+                        bit_index += 1
+                else:
+                    break  # Stop if we run out of bits
+
+        print(f"Str before decryption: {store}")
+
+    def image(self):
+        """ This function processes the image and adds binary data to the DataFrame """
+        self.img = Image.open("output.png")
+        print(f"Size of image is: {self.img.size}")
+        print(f"Image mode is: {self.img.mode}")
+        self.pixels = self.img.load()
+
+        # Iterating over the pixels and extracting the RGB values
+        for i in range(self.fit):
+            x = i + 1
+            y = i + 1
+            self.current = self.pixels[x, y]
+            a = self.current[0]
+            b = self.current[1]
+            c = self.current[2]
+
+            # Convert RGB values to binary
+            red = format(a, '08b')
+            green = format(b, '08b') if b is not None else None
+            blue = format(c, '08b') if c is not None else None
+
+            # Add the binary triplet to the DataFrame
+            self.dataStuctAddition(red, green, blue)
+
+        # If leftover data is less than a full pixel, add one or two colour channels worth of data to end of output.
+        if self.leftover == 1:
+            self.dataStuctAddition(red)
+        elif self.leftover == 2:
+            self.dataStuctAddition(red, green)
+
+        # Save the output image
+        self.img.save("output.png")
+        print(self.df)
+
+
+
 # ------------------ Caesar Cipher Class ------------------
 class Caesar:
-    def __init__(self, caller_instance, shift=None):
-        self.shift = shift
+    def __init__(self, caller_instance):
+        self.shift = 5
         self.caller_data = caller_instance.data
         self.encryptionHeader = [""]
 
@@ -145,9 +232,8 @@ class Caesar:
             return
 
     def take_shift(self):
-        self.shift = random.choice([2, 3, 4, 5, 6, 7, 8, 9])
-        self.encryptionHeader.append(self.shift)
-        return self.encryptionHeader
+        self.shift = 2
+        
 
     def caeser(self):
         if not self.caller_data or self.shift is None:
@@ -179,6 +265,8 @@ caesar.errorCheck()
 caesar.take_shift()
 shifted_binary = caesar.caeser()
 
+
+
 caller_instance.image()
 caller_instance.changer()
 
@@ -189,3 +277,9 @@ else:
     print("No shifted binary data available to write.")
 
 caller_instance.update_image_from_df()  # <- Add this!
+s = caller_instance.returner()
+
+extract_instance = extraction(s[0],s[1],s[2])
+
+extract_instance.image()
+extract_instance.extract()
