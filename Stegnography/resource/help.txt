@@ -1,0 +1,3 @@
+This help file serves as a tool guide for users wanting to deploy stego!
+
+1. 
