@@ -1,8 +1,0 @@
-Need to sort image function, i need to make it so it can select a range of pixels using self.fit
-if self.fit is 7 use 7 pixels for example.
-
-Then- split the rgb of these 7 pixels one by one, send them through as a,b,c one pixel at a time.
-data structure needs to handle these appropriately then.
-
-Then take the data, it should be appended correctly to self.df
-Add this data back to the image basically reversing taking the pixel range tbf.
