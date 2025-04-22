@@ -1,5 +1,9 @@
 Goals
 know how to create multiple pages to move between hashing/ encryption/ decrypt/ help etc
 
+Knowing how to make input boxes mandatory, then sending the output of 3 to my classes
+ONLY once the 3 have been filled with the correct data (error handling needed here)
+Impliment drag and drop for these 3 boxes too
+
 Know how to display my logo / stego 2.10/ a overall design that stays constant between every page
 I believe this can be done using mainframe then adding to it on the other frames.
