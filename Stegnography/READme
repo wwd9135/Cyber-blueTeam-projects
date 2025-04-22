@@ -1,55 +1,5 @@
- Requirements Checklist for a Basic Steganography Program 
-Here’s a key list of what your program needs to do. You can build it modularly: 
+Goals
+know how to create multiple pages to move between hashing/ encryption/ decrypt/ help etc
 
- 
-
-1. Data Handling 
-Convert text message into binary (ASCII to 8-bit binary). 
-Optionally compress or encrypt the message for added stealth. 
-
- 
-
-2. Image Processing 
-Load the image (e.g., using PIL.Image). 
-Check image capacity (can it hold the full message?). 
-Convert image pixels into modifiable data (e.g., RGB values). 
-Embed the binary data in the LSBs of the image pixels. 
-Save the modified image. 
-
- 
-
-3. Message Extraction 
-Load the stego image. 
-Read the LSBs across the same pixel sequence. 
-Convert binary back to ASCII text. 
-Optionally decrypt/decompress the message. 
-
- 
-
-4. Key-based Access (optional but good) 
-Use a key/password to encrypt/decrypt the message. 
-Or use the key to determine: 
-Which pixels to modify (e.g., a pseudo-random pattern). 
-How deep to hide (e.g., in Red only or RGB). 
-
- 
-
-5. UX Features (Optional) 
-CLI flags to encode/decode. 
-Message length auto-detection or explicit length prefix. 
-Image preview or visual comparison. 
-Error handling (e.g., file too small, invalid format). 
-
-6. Extraction Process (The Reverse) 
-To decode the message: 
-Load the image 
-Read pixel values in the same order 
-Extract the LSB from each channel
-Rebuild the binary message 
-Convert every 8 bits to a character 
-Stop when: 
-You reach a predefined length 
-You hit a special end marker (like '1111111111111110') 
-You've read all available pixels 
-
- 
+Know how to display my logo / stego 2.10/ a overall design that stays constant between every page
+I believe this can be done using mainframe then adding to it on the other frames.
