@@ -1,47 +1,80 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, filedialog
 from PIL import Image, ImageTk
+import tkinter as tk
 
-def generic(root):
-    # Create style for the frame
-    s = ttk.Style()
-    s.configure('Danger.TFrame', background='grey', borderwidth=5, relief='raised')
-    
+class MyApp:
+    def __init__(self, root):
+        self.root = root
+        self.txtInput = None
+        self.imgInput = None
+        self.entryImg = None
+        self.entryTxt = None
+        root.title("Stego - Steganography Toolkit")
+        root.iconbitmap(r'C:\Users\theri\downloads\ad84ddbf-6877-4b88-82ab-3357ace4f595.ico') 
 
-    # Create the frame and assign it to a variable
-    danger_frame = ttk.Frame(root, style='Danger.TFrame')
-    danger_frame.grid(column=0, row=0, sticky=(N, W, E, S), padx=1, pady=1)
+        # Create styled frame
+        s = ttk.Style()
+        s.configure('Danger.TFrame', background='#4F4F4F', borderwidth=5, relief='raised')
 
-    # Add a label inside the frame
-    ttk.Label(danger_frame, text='Stego Ver 2.1.1').grid(column=3, row=0, padx=10, pady=10, sticky=W)
+        danger_frame = LabelFrame(root, fg="black", bg="#4F4F4F")
+        danger_frame.grid(columnspan=8, rowspan=9, column=0, row=0, sticky=(N, W, E, S), padx=5, pady=5)
 
-    # Load and resize image
-    raw_img = Image.open("ad84ddbf-6877-4b88-82ab-3357ace4f595.png")
-    resized_img = raw_img.resize((30, 30))
-    image = ImageTk.PhotoImage(resized_img)
+        # Title and Icon
+        ttk.Label(danger_frame, text='Stego Ver 2.1.1').grid(column=0, row=0)
+        raw_img = Image.open("ad84ddbf-6877-4b88-82ab-3357ace4f595.png")
+        resized_img = raw_img.resize((30, 30))
+        image = ImageTk.PhotoImage(resized_img)
+        img_label = Label(danger_frame, image=image, background='#333333')
+        img_label.image = image  # Keep a reference
+        img_label.grid(column=7, row=0, padx=5, pady=5, sticky=E)
 
-    # Display image next to the label
-    img_label = Label(danger_frame, image=image, background='grey')
-    img_label.image = image  # Keep a reference
-    img_label.grid(column=5, row=0, padx=5, pady=5, sticky=E)
-    d = ttk.Scale(danger_frame, orient=HORIZONTAL, length=200, from_=1.0, to=100.0)
+                # Label for text input
+        ttk.Label(danger_frame, text='Enter hidden message text', width=35).grid(column=1, row=1,pady=2)
+        self.entryImg = ttk.Entry(danger_frame,width=35)
+        self.entryImg.grid(column=1, row= 2,pady=2)
+        # Label for image path input
+        ttk.Label(danger_frame, text='Enter exact path to img youd like to store text in', width=35).grid(column=1, row=5, pady=2, sticky= S)
 
-    ttk.Label(danger_frame,text= 'Enter hidden message txt file' ).grid(column=4,row=1)
-    TxtFileEntry = ttk.Entry(danger_frame, width=25, textvariable=StringVar)
-    TxtFileEntry.grid(column=4, row=2, sticky=(E))
-    #TODO- Add drag and drop here
+        # Entry box
+        self.entryTxt = ttk.Entry(danger_frame, width=35)
+        self.entryTxt.grid(column=1, row=6,  padx=5, pady=2)
 
-    #TODO- Finish rest of input buttons, they should create an output i can pass to code classes.
+        # Img name entry box
+        ttk.Label(danger_frame,text="Enter a name for your outputted image", width= 35).grid(column=1, row=8, pady=2)
+        self.entryOutputImgName =  ttk.Entry(danger_frame,width=35)
+        self.entryOutputImgName.grid(column=1, row=9, padx=5, pady=2)
+
+
+        # Button
+        tk.Button(danger_frame, text= "Load Txt file" , command= self.get_txt, width=30). grid(column=1, row=3, pady=2)
+        tk.Button(danger_frame, text="Load Img File", command=self.get_img, width=30).grid(column=1, row=7, pady=2)
+
+
         
-    
-    
-    #Making new page
-    #ttk.Button(danger_frame, alternate)
-    #def alternate(root):
-      #  alternate_frame = ttk.Frame(danger_frame, style='Danger.TFrame')
-       # alternate_frame.grid(column=0, row=0, sticky=(N, W, E, S), padx=1, pady=1)
-    #    
+
+    def get_img(self):
+        pass
+    def get_txt(self):
+        input_path = self.entry.get()
+        print(input_path)
+        try:
+            if input_path.endswith(".txt"):
+                with open(input_path, "r") as file:
+                    self.txtInput = file.read()
+                print("Text file loaded:\n", self.txtInput)
+
+            elif input_path.endswith(".png"):
+                with open(input_path, "rb") as file:
+                    self.imgInput = file.read()
+                print("Image file loaded (in bytes)")
+
+            else:
+                print("Unsupported file type.")
+        except Exception as e:
+            print("Error loading file:", e)
+
+# Launch the GUI
 root = Tk()
-root.title("Stego - Steganography Toolkit")
-generic(root)
+app = MyApp(root)
 root.mainloop()
