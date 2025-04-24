@@ -283,7 +283,7 @@ class Caesar:
         remainder = len(self.caller_data) % 8
         if remainder:
             shifted_binary += self.caller_data[-remainder:]
-
+ 
         return shifted_binary
    
 # Launch the GUI
