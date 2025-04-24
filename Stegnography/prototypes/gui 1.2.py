@@ -6,10 +6,9 @@ import tkinter as tk
 class MyApp:
     def __init__(self, root):
         self.root = root
-        self.txtInput = None
-        self.imgInput = None
-        self.entryImg = None
-        self.entryTxt = None
+        self.InputTxt = None
+        self.imgPath = None
+        self.NewImg_name = None
 
     def bulk(self):
         self.root.title("Stego - Steganography Toolkit")
@@ -33,25 +32,26 @@ class MyApp:
 
         # Text input
         tk.Label(danger_frame, text='Enter hidden message text', bg="#2B2B2B", fg="#DADADA", width=35).grid(column=1, row=2, pady=2)
-        self.entryImg = tk.Entry(danger_frame, width=35, bg="#1E1E1E", fg="#DADADA", insertbackground="#DADADA", highlightthickness=1, highlightbackground="#3B8ED0")
-        self.entryImg.grid(column=1, row=3, pady=2)
+        self.entryTxt = tk.Entry(danger_frame, width=35, bg="#1E1E1E", fg="#DADADA", insertbackground="#DADADA", highlightthickness=1, highlightbackground="#3B8ED0")
+        self.entryTxt.grid(column=1, row=3, pady=2)
 
         # Image path input
         tk.Label(danger_frame, text='Enter exact path to img you’d like to store text in', bg="#2B2B2B", fg="#DADADA", width=36).grid(column=1, row=5, pady=2)
-        self.entryTxt = tk.Entry(danger_frame, width=35, bg="#1E1E1E", fg="#DADADA", insertbackground="#DADADA", highlightthickness=1, highlightbackground="#3B8ED0")
-        self.entryTxt.grid(column=1, row=6, padx=5, pady=2)
+        self.entryImg = tk.Entry(danger_frame, width=35, bg="#1E1E1E", fg="#DADADA", insertbackground="#DADADA", highlightthickness=1, highlightbackground="#3B8ED0")
+        self.entryImg.grid(column=1, row=6, padx=5, pady=2)
 
         # Output image name input
         tk.Label(danger_frame, text="Enter a name for your outputted image", bg="#2B2B2B", fg="#DADADA", width=35).grid(column=1, row=9, pady=2)
         self.entryOutputImgName = tk.Entry(danger_frame, width=35, bg="#1E1E1E", fg="#DADADA", insertbackground="#DADADA", highlightthickness=1, highlightbackground="#3B8ED0")
         self.entryOutputImgName.grid(column=1, row=10, padx=5, pady=2)
+    
 
         # File loading buttons
         tk.Button(danger_frame, text="Load Txt File", command=self.get_txt, width=30, bg="#3B8ED0", fg="white", activebackground="#2B2B2B").grid(column=1, row=4, pady=2)
         tk.Button(danger_frame, text="Load Img File", command=self.get_img, width=30, bg="#3B8ED0", fg="white", activebackground="#2B2B2B").grid(column=1, row=8, pady=2)
 
         # Hide button
-        tk.Button(danger_frame, text="Hide Data", command=self.combination, width=12, bg="#3B8ED0", fg="white", activebackground="#2B2B2B").grid(column=2, row=11, padx=2, pady=5)
+        tk.Button(danger_frame, text="Hide Data", command=self.checker, width=12, bg="#3B8ED0", fg="white", activebackground="#2B2B2B").grid(column=2, row=11, padx=2, pady=5)
 
     def sideBar(self):
         SideBar_frame = LabelFrame(self.root, bg="#1E1E1E", fg="#DADADA", bd=2)
@@ -64,36 +64,38 @@ class MyApp:
         tk.Button(SideBar_frame, text="Extract Data", command=self.extract_page, width=20, bg="#3B8ED0", fg="white").grid(column=0, row=3, pady=2)
         tk.Button(SideBar_frame, text="Create Signature", command=self.sigCreator, width=20, bg="#3B8ED0", fg="white").grid(column=0, row=5, pady=2)
         tk.Button(SideBar_frame, text="Embed Watermark", command=self.embeded_watermark, width=20, bg="#3B8ED0", fg="white").grid(column=0, row=6, pady=2)
-
+    def checker(self):
+        self.NewImg_name = self.entryOutputImgName.get()  # Get the image name when needed
+        
+        if self.imgPath is not None:
+            if self.InputTxt is not None:
+                if self.NewImg_name is not None:
+                    self.combination()
+                    
 
     #New plan is creating the output, once all 3 are filled, pass to combination which will revalidate input, 
     #and if its correct i can exfiltrate it to the stego classes, Im calling this function repeatadly for this purpose
     def combination(self):
-        pass
+        combo = [self.InputTxt , self.imgPath , self.NewImg_name]
+        print(f"desired output for checking {combo}")
+        return combo
 
-    #def get_img(self):
-     #   pass
+    def get_img(self):
+        # File dialog to select an image
+        self.imgPath = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg")])
+        print(f"Image path selected: {self.imgPath}")
 
     def get_txt(self):
-        input_path = self.entryImg.get()
-        print(input_path)
-        try:
-            if input_path.endswith(".txt"):
-                with open(input_path, "r") as file:
-                    self.txtInput = file.read()
-                print("Text file loaded:\n", self.txtInput)
-            elif input_path.endswith(".png"):
-                with open(input_path, "rb") as file:
-                    self.imgInput = file.read()
-                print("Image file loaded (in bytes)")
-            else:
-                print("Unsupported file type.")
-        except Exception as e:
-            print("Error loading file:", e)
+        # File dialog to select a text file
+        file_path = filedialog.askopenfilename(filetypes=[("Text files", "*.txt")])
+        with open(file_path, 'r') as file:
+            self.InputTxt = file.read()
+        print(f"Text path selected: {self.InputTxt}")        
 
-    def output(self):
-        output1 = self.combination
 
+
+
+    #Following are in beta add ons currently!
     def extract_page(self):
         pass
 
@@ -110,16 +112,21 @@ class stego:
         self.NewImg_name = c
         #Add rest of class variables
     
-    #Add rest of stego and caeser
+    #Need to Add rest of stego and caeser once ive got the correct input
     def main(self):
-        pass
+        print(self.InputTxt)
+        print(self.imgPath)
+        print(self.NewImg_name)
+        #May need to output these are popups on the website as wont be able to exit the loop and retrieve the data i believe.
 # Launch the GUI
 root = Tk()
 app = MyApp(root)
 app.bulk()
 app.sideBar()
 
-#Taking the 3 outputs from MyApp class, feeding them to stego.
+# Taking the 3 outputs from MyApp class, feeding them to stego.
 s = app.combination()
-stego(s[1],s[2],s[3])
+stego_instance = stego(s[0], s[1], s[2])  # Instantiate the stego class
+stego_instance.main()  # Ensure you're calling `main` to execute the stego logic
 root.mainloop()
+
