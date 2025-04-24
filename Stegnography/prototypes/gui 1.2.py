@@ -255,9 +255,9 @@ class stego:
 
 # ------------------ Caesar Cipher Class ------------------
 class Caesar:
-    def __init__(self, caller_instance):
+    def __init__(self, stego_instance):
         self.shift = 5
-        self.caller_data = caller_instance.data
+        self.caller_data = stego_instance.data
         self.encryptionHeader = [""]
 
     def errorCheck(self):
