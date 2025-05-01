@@ -1,0 +1,3 @@
+Script to check that Defender is enabled, up to date, real-time protection is active, and recent scans have run.
+
+Add an alert if definitions are stale or if the engine is disabled.
