@@ -1,0 +1,5 @@
+Use Get-HotFix, WMI, or SCCM PowerShell modules to audit patch status across endpoints.
+
+Export reports (CSV or HTML) highlighting missing patches or last update dates.
+
+Bonus: Include color-coded compliance scores per device.
