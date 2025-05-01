@@ -1,0 +1,3 @@
+Check and export a user's group memberships, last login time, and AD status (locked/disabled).
+
+Great for triaging incidents or onboarding/offboarding.
