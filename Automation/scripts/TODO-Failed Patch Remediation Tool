@@ -1,0 +1,4 @@
+Automatically identify and attempt remediation of failed patches (e.g. clear update cache, re-download, force reboot).
+
+Include detailed logging and optional Teams/email notification.
+
