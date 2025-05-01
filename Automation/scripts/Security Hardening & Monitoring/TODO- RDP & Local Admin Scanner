@@ -1,0 +1,5 @@
+Scan endpoints to check for:
+  Open/Enabled RDP
+  Unauthorized users in the local Administrators group
+
+Useful for rapid compliance reviews.
