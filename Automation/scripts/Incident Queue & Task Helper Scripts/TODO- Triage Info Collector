@@ -1,0 +1,3 @@
+Script to collect key system info on a troubled machine:
+  Uptime, event logs, installed updates, disk space, AV status
+  Package into a readable support ticket note
