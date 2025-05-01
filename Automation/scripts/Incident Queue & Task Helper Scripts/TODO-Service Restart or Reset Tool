@@ -1,0 +1,4 @@
+Menu-driven script to quickly restart common services like Windows Update, SCCM, Intune, or Defender services.
+
+Handy for 1st/2nd line tasks to resolve frequent incidents.
+
