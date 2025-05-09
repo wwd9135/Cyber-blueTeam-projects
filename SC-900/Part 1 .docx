@@ -1,0 +1,29 @@
+Part 1 Describe the concepts of security, compliance, and identity 
+
+ 
+
+1.0 Security & Compliance: 
+
+Importance- organisations are storing more data outside traditional methods, implementing cloud etc. We need to understand how to protect this new wider scope of attack.  
+
+1.2.1 Shared responsibility model 
+
+With on prem storage, hardware/software, the organisation is 100% responsible for implementing security & compliance. While cloud or any form of service providers split this load between the SP and the org.  
+
+PictureFigure 1, shared responsibility model 
+
+ 
+
+1.3 Challenges: 
+
+Describe the shared responsibility and the defense in-depth security models. 
+
+Describe the Zero-Trust model. 
+
+Describe the concepts of encryption and hashing. 
+
+Describe some basic compliance concepts. 
+
+ 
+
+2.0 Describe Identity concepts: 
